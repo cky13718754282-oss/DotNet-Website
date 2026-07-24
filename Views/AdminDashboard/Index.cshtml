@@ -1,0 +1,121 @@
+@model Geekspace.ViewModels.AdminDashboardViewModel
+
+@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+
+<section class="page-hero compact">
+    <div class="container">
+        <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+            <a asp-controller="Home" asp-action="Index">Home</a><span>/</span><span>Admin Dashboard</span>
+        </nav>
+        <div class="page-hero-row">
+            <div>
+                <span class="eyebrow eyebrow-light">Administration</span>
+                <h1>Platform Dashboard</h1>
+                <p>Monitor learning content, members and community engagement from one place.</p>
+            </div>
+            <a asp-controller="Resource" asp-action="Create" class="btn btn-accent btn-lg">+ Add resource</a>
+        </div>
+    </div>
+</section>
+
+<section class="section-block dashboard-section">
+    <div class="container">
+        <div class="dashboard-stat-grid">
+            <article class="dashboard-stat">
+                <span class="dashboard-stat-label">Learning resources</span>
+                <strong>@Model.ResourceCount</strong>
+                <small>@Model.PublishedResourceCount currently published</small>
+            </article>
+            <article class="dashboard-stat">
+                <span class="dashboard-stat-label">Registered users</span>
+                <strong>@Model.UserCount</strong>
+                <small>Identity accounts in the database</small>
+            </article>
+            <article class="dashboard-stat">
+                <span class="dashboard-stat-label">Community comments</span>
+                <strong>@Model.CommentCount</strong>
+                <small>Member discussion contributions</small>
+            </article>
+            <article class="dashboard-stat">
+                <span class="dashboard-stat-label">Learning engagement</span>
+                <strong>@(Model.SavedCount + Model.CompletedCount)</strong>
+                <small>@Model.SavedCount saved · @Model.CompletedCount completed</small>
+            </article>
+        </div>
+
+        <div class="dashboard-actions" aria-label="Administration shortcuts">
+            <a asp-controller="Resource" asp-action="Index" class="dashboard-action-card">
+                <span>01</span><div><strong>Manage resources</strong><small>Create, edit, publish or delete learning content.</small></div>
+            </a>
+            <a asp-controller="Category" asp-action="Index" class="dashboard-action-card">
+                <span>02</span><div><strong>Manage categories</strong><small>Organise @Model.CategoryCount learning topics.</small></div>
+            </a>
+            <a asp-controller="UserManagement" asp-action="Index" class="dashboard-action-card">
+                <span>03</span><div><strong>Manage users</strong><small>Review accounts and role permissions.</small></div>
+            </a>
+            <a asp-controller="Activity" asp-action="Index" class="dashboard-action-card">
+                <span>04</span><div><strong>Moderate activity</strong><small>Review and remove inappropriate comments.</small></div>
+            </a>
+        </div>
+
+        <div class="dashboard-columns">
+            <section class="dashboard-panel">
+                <div class="dashboard-panel-heading">
+                    <div><span class="eyebrow">Content</span><h2>Recent resources</h2></div>
+                    <a asp-controller="Resource" asp-action="Index" class="text-link">View all →</a>
+                </div>
+                @if (!Model.RecentResources.Any())
+                {
+                    <p class="text-muted mb-0">No learning resources are available.</p>
+                }
+                else
+                {
+                    <div class="dashboard-list">
+                        @foreach (var resource in Model.RecentResources)
+                        {
+                            <article>
+                                <div>
+                                    <span class="resource-topic">@(resource.Category?.Name ?? "Uncategorised")</span>
+                                    <h3><a asp-controller="Resource" asp-action="Details" asp-route-id="@resource.Id">@resource.Title</a></h3>
+                                </div>
+                                <span class="status-badge @(resource.IsPublished ? "complete" : "saved")">
+                                    @(resource.IsPublished ? "Published" : "Draft")
+                                </span>
+                            </article>
+                        }
+                    </div>
+                }
+            </section>
+
+            <section class="dashboard-panel">
+                <div class="dashboard-panel-heading">
+                    <div><span class="eyebrow">Community</span><h2>Recent comments</h2></div>
+                    <a asp-controller="Activity" asp-action="Index" class="text-link">Moderate →</a>
+                </div>
+                @if (!Model.RecentComments.Any())
+                {
+                    <p class="text-muted mb-0">No comments have been posted.</p>
+                }
+                else
+                {
+                    <div class="dashboard-comment-list">
+                        @foreach (var comment in Model.RecentComments)
+                        {
+                            var author = Model.CommentAuthors.TryGetValue(comment.UserId, out var name) ? name : "Former member";
+                            <article>
+                                <div class="comment-avatar" aria-hidden="true">@author.Substring(0, 1).ToUpperInvariant()</div>
+                                <div>
+                                    <strong>@author</strong>
+                                    <p>@comment.Content</p>
+                                    <small>@(comment.LearningResource?.Title ?? "Removed resource") · @comment.PostedDate.ToString("dd MMM yyyy")</small>
+                                </div>
+                            </article>
+                        }
+                    </div>
+                }
+            </section>
+        </div>
+    </div>
+</section>

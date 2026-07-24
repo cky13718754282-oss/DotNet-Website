@@ -1,44 +1,53 @@
 @model IEnumerable<Geekspace.Models.Category>
 
 @{
-    ViewData["Title"] = "Categories";
+    ViewData["Title"] = "Topic Directory";
+    var categories = Model.ToList();
+    var isAdmin = User.IsInRole("Admin") || User.IsInRole("Root");
 }
 
-<h1>Categories</h1>
+<section class="page-hero compact">
+    <div class="container">
+        <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+            <a asp-controller="Home" asp-action="Index">Home</a><span>/</span><span>Topics</span>
+        </nav>
+        <div class="page-hero-row">
+            <div>
+                <span class="eyebrow eyebrow-light">Structured discovery</span>
+                <h1>Topic Directory</h1>
+                <p>Choose a focused area and follow the resources that match your goals.</p>
+            </div>
+            @if (isAdmin)
+            {
+                <a asp-action="Create" class="btn btn-accent btn-lg">+ Add topic</a>
+            }
+        </div>
+    </div>
+</section>
 
-@if (User.IsInRole("Admin") || User.IsInRole("Root"))
-{
-    <p>
-        <a asp-action="Create" class="btn btn-primary btn-sm">Create New</a>
-    </p>
-}
-
-<table class="table">
-    <thead>
-        <tr>
-            <th>@Html.DisplayNameFor(model => model.Name)</th>
-            <th>@Html.DisplayNameFor(model => model.Description)</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@Html.DisplayFor(modelItem => item.Name)</td>
-                <td>@Html.DisplayFor(modelItem => item.Description)</td>
-                <td>
-                    @if (User.IsInRole("Admin") || User.IsInRole("Root"))
+<section class="section-block">
+    <div class="container">
+        <div class="topic-grid large">
+            @for (var i = 0; i < categories.Count; i++)
+            {
+                var item = categories[i];
+                <article class="topic-card">
+                    <span class="topic-number">@((i + 1).ToString("00"))</span>
+                    <h2><a asp-action="Details" asp-route-id="@item.Id">@item.Name</a></h2>
+                    <p>@item.Description</p>
+                    <div class="topic-card-footer">
+                        <span>@item.Resources.Count(r => r.IsPublished) published resources</span>
+                        <a asp-action="Details" asp-route-id="@item.Id">Explore →</a>
+                    </div>
+                    @if (isAdmin)
                     {
-                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> <text> | </text>
+                        <div class="admin-card-actions">
+                            <a asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                            <a asp-action="Delete" asp-route-id="@item.Id" class="text-danger">Delete</a>
+                        </div>
                     }
-                    <a asp-action="Details" asp-route-id="@item.Id">Details</a>
-                    @if (User.IsInRole("Admin") || User.IsInRole("Root"))
-                    {
-                        <text> | </text><a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
-                    }
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+                </article>
+            }
+        </div>
+    </div>
+</section>

@@ -610,6 +610,9 @@
         }
       },
       "Microsoft.AspNetCore.Identity.UI/10.0.10": {
+        "dependencies": {
+          "Microsoft.Extensions.FileProviders.Embedded": "10.0.10"
+        },
         "runtime": {
           "lib/net10.0/Microsoft.AspNetCore.Identity.UI.dll": {
             "assemblyVersion": "10.0.10.0",
@@ -1211,17 +1214,17 @@
           "runtimes/win-arm64/native/Microsoft.Data.SqlClient.SNI.dll": {
             "rid": "win-arm64",
             "assetType": "native",
-            "fileVersion": "0.0.0.0"
+            "fileVersion": "6.2.0.0"
           },
           "runtimes/win-x64/native/Microsoft.Data.SqlClient.SNI.dll": {
             "rid": "win-x64",
             "assetType": "native",
-            "fileVersion": "0.0.0.0"
+            "fileVersion": "6.2.0.0"
           },
           "runtimes/win-x86/native/Microsoft.Data.SqlClient.SNI.dll": {
             "rid": "win-x86",
             "assetType": "native",
-            "fileVersion": "0.0.0.0"
+            "fileVersion": "6.2.0.0"
           }
         }
       },
@@ -1354,6 +1357,14 @@
         "runtime": {
           "lib/net10.0/Microsoft.Extensions.DependencyModel.dll": {
             "assemblyVersion": "10.0.0.10",
+            "fileVersion": "10.0.1026.32716"
+          }
+        }
+      },
+      "Microsoft.Extensions.FileProviders.Embedded/10.0.10": {
+        "runtime": {
+          "lib/net10.0/Microsoft.Extensions.FileProviders.Embedded.dll": {
+            "assemblyVersion": "10.0.0.0",
             "fileVersion": "10.0.1026.32716"
           }
         }
@@ -1934,17 +1945,17 @@
           "runtimes/win-arm64/native/e_sqlite3.dll": {
             "rid": "win-arm64",
             "assetType": "native",
-            "fileVersion": "0.0.0.0"
+            "fileVersion": "3.50.4.5"
           },
           "runtimes/win-x64/native/e_sqlite3.dll": {
             "rid": "win-x64",
             "assetType": "native",
-            "fileVersion": "0.0.0.0"
+            "fileVersion": "3.50.4.5"
           },
           "runtimes/win-x86/native/e_sqlite3.dll": {
             "rid": "win-x86",
             "assetType": "native",
-            "fileVersion": "0.0.0.0"
+            "fileVersion": "3.50.4.5"
           }
         }
       },
@@ -2698,6 +2709,13 @@
       "sha512": "sha512-rfZA1RjR021RPqSmIPovfz2aOd79TGqJ9BengbjnzIISOVwjLmuSDnhCMmiY/1c6iYvGolQ1iNGzkav0u11XEA==",
       "path": "microsoft.extensions.dependencymodel/10.0.10",
       "hashPath": "microsoft.extensions.dependencymodel.10.0.10.nupkg.sha512"
+    },
+    "Microsoft.Extensions.FileProviders.Embedded/10.0.10": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-TZQQIZ1wFmQX7WdRAyhaDlv3splUPOYheTP3aZtoLpxMlVnLOFRjiLaDB0PZX/d27N52+FLbiNkwL02x4hZgjg==",
+      "path": "microsoft.extensions.fileproviders.embedded/10.0.10",
+      "hashPath": "microsoft.extensions.fileproviders.embedded.10.0.10.nupkg.sha512"
     },
     "Microsoft.Identity.Client/4.73.1": {
       "type": "package",

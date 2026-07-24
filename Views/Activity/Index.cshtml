@@ -1,77 +1,141 @@
-@model List<Geekspace.Models.ResourceComment>
+@model Geekspace.ViewModels.ActivityIndexViewModel
 
 @{
     ViewData["Title"] = "Manage Activity";
-}
-
-<h1>Manage Activity</h1>
-
-@{
     var isRoot = ViewBag.IsRoot as bool? ?? false;
     var isAdmin = ViewBag.IsAdmin as bool? ?? false;
-    var userNames = ViewBag.UserNames as System.Collections.Generic.Dictionary<string, string> ?? new Dictionary<string, string>();
-    var canDeleteDict = ViewBag.CanDeleteDict as System.Collections.Generic.Dictionary<int, bool> ?? new Dictionary<int, bool>();
+    var userNames = ViewBag.UserNames as Dictionary<string, string> ?? new Dictionary<string, string>();
+    var canDeleteDict = ViewBag.CanDeleteDict as Dictionary<int, bool> ?? new Dictionary<int, bool>();
 }
 
-@if (!isRoot && !isAdmin)
-{
-    <p class="text-muted">Only your comments are displayed here.</p>
-}
+<section class="page-hero compact">
+    <div class="container">
+        <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+            <a asp-controller="Home" asp-action="Index">Home</a><span>/</span><span>Activity</span>
+        </nav>
+        <span class="eyebrow eyebrow-light">Member module</span>
+        <h1>@(isAdmin || isRoot ? "Community Activity" : "My Activity")</h1>
+        <p>@(isAdmin || isRoot ? "Review and moderate discussion across the learning platform." : "Review and manage your contributions to resource discussions.")</p>
+    </div>
+</section>
 
-@if (!Model.Any())
-{
-    <p>You haven't posted any comments yet. Browse the <a asp-controller="Resource" asp-action="Index">resource library</a> to join a discussion.</p>
-}
-else
-{
-    <table class="table">
-        <thead>
-            <tr>
-                <th>User</th>
-                <th>Resource</th>
-                <th>Comment</th>
-                <th>Posted</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var comment in Model)
-            {
-                var userName = userNames.ContainsKey(comment.UserId) ? userNames[comment.UserId] : "Deleted accounts";
-                var canDelete = canDeleteDict.ContainsKey(comment.Id) && canDeleteDict[comment.Id];
-                
-                <tr>
-                    <td>@userName</td>
-                    <td>
-                        @if (comment.LearningResource != null)
+<section class="section-block">
+    <div class="container">
+        <div class="admin-summary">
+            <div><strong>@Model.SavedCount</strong><span>saved resources</span></div>
+            <div><strong>@Model.CompletedCount</strong><span>completed resources</span></div>
+            <div><strong>@Model.Comments.Count</strong><span>visible comments</span></div>
+            <div><strong>@(isRoot ? "Root" : isAdmin ? "Admin" : "Member")</strong><span>access level</span></div>
+        </div>
+
+        <div class="section-heading activity-heading">
+            <div>
+                <span class="eyebrow">Learning progress</span>
+                <h2>My learning list</h2>
+                <p>Resources you saved or marked as completed are stored in your account.</p>
+            </div>
+            <a asp-controller="Resource" asp-action="Index" class="btn btn-outline-secondary">Browse library</a>
+        </div>
+
+        @if (!Model.LearningItems.Any())
+        {
+            <div class="empty-state compact">
+                <h3>No saved learning yet</h3>
+                <p>Open a resource to save it or mark it as completed.</p>
+            </div>
+        }
+        else
+        {
+            <div class="learning-list">
+                @foreach (var item in Model.LearningItems)
+                {
+                    var resource = item.LearningResource;
+                    if (resource == null)
+                    {
+                        continue;
+                    }
+                    <article class="learning-list-item">
+                        <div class="learning-list-main">
+                            <div class="learning-status-icon @(item.IsCompleted ? "complete" : "saved")" aria-hidden="true">
+                                @(item.IsCompleted ? "✓" : "★")
+                            </div>
+                            <div>
+                                <span class="resource-topic">@(resource.Category?.Name ?? "Uncategorised") · @resource.Type</span>
+                                <h3><a asp-controller="Resource" asp-action="Details" asp-route-id="@resource.Id">@resource.Title</a></h3>
+                                <p>Updated @item.LastUpdated.ToString("dd MMM yyyy, HH:mm")</p>
+                            </div>
+                        </div>
+                        <div class="learning-badges">
+                            @if (item.IsSaved)
+                            {
+                                <span class="status-badge saved">Saved</span>
+                            }
+                            @if (item.IsCompleted)
+                            {
+                                <span class="status-badge complete">Completed</span>
+                            }
+                        </div>
+                    </article>
+                }
+            </div>
+        }
+
+        <div class="section-heading activity-heading discussion-heading">
+            <div>
+                <span class="eyebrow">Discussion activity</span>
+                <h2>@(isAdmin || isRoot ? "Community comments" : "My comments")</h2>
+                <p>@(isAdmin || isRoot ? "Moderate recent contributions across the platform." : "Review and manage your discussion contributions.")</p>
+            </div>
+        </div>
+
+        @if (!Model.Comments.Any())
+        {
+            <div class="empty-state compact">
+                <h3>No comments yet</h3>
+                <p>Visit a learning resource and join its discussion.</p>
+            </div>
+        }
+        else
+        {
+            <div class="table-card">
+                <div class="table-responsive">
+                    <table class="table align-middle mb-0">
+                        <thead><tr><th>User</th><th>Resource</th><th>Comment</th><th>Posted</th><th class="text-end">Action</th></tr></thead>
+                        <tbody>
+                        @foreach (var comment in Model.Comments)
                         {
-                            <a asp-controller="Resource" asp-action="Details" asp-route-id="@comment.LearningResourceId">
-                                @comment.LearningResource.Title
-                            </a>
+                            var userName = userNames.TryGetValue(comment.UserId, out var name) ? name : "Former member";
+                            var canDelete = canDeleteDict.TryGetValue(comment.Id, out var allowed) && allowed;
+                            <tr>
+                                <td><strong>@userName</strong></td>
+                                <td>
+                                    @if (comment.LearningResource != null)
+                                    {
+                                        <a asp-controller="Resource" asp-action="Details" asp-route-id="@comment.LearningResourceId">@comment.LearningResource.Title</a>
+                                    }
+                                    else
+                                    {
+                                        <span class="text-muted">Removed resource</span>
+                                    }
+                                </td>
+                                <td class="comment-cell">@comment.Content</td>
+                                <td class="text-nowrap">@comment.PostedDate.ToString("dd MMM yyyy")</td>
+                                <td class="text-end">
+                                    @if (canDelete)
+                                    {
+                                        <form asp-controller="Comment" asp-action="Delete" asp-route-id="@comment.Id"
+                                              method="post" data-confirm="Delete this comment?">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                                        </form>
+                                    }
+                                </td>
+                            </tr>
                         }
-                        else
-                        {
-                            <span class="text-muted">(resource removed)</span>
-                        }
-                    </td>
-                    <td>@comment.Content</td>
-                    <td>@comment.PostedDate.ToString("g")</td>
-                    <td>
-                        @if (canDelete)
-                        {
-                            <form asp-controller="Comment" asp-action="Delete" asp-route-id="@comment.Id" method="post"
-                                  onsubmit="return confirm('Delete this comment?');">
-                                @Html.AntiForgeryToken()
-                                <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
-                            </form>
-                        }
-                        else if (!isRoot && !isAdmin)
-                        {
-                            <span class="text-muted">-</span>
-                        }
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        }
+    </div>
+</section>

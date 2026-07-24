@@ -1,68 +1,24 @@
 @model Geekspace.Models.LearningResource
+@{ ViewData["Title"] = "Create Resource"; }
 
-@{
-    ViewData["Title"] = "Create";
-}
-
-<h1>Create</h1>
-
-<h4>LearningResource</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Title" class="control-label"></label>
-                <input asp-for="Title" class="form-control" />
-                <span asp-validation-for="Title" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
-                <input asp-for="Description" class="form-control" />
-                <span asp-validation-for="Description" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Content" class="control-label"></label>
-                <textarea asp-for="Content" class="form-control"></textarea>
-                <span asp-validation-for="Content" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Type" class="control-label"></label>
-                <select asp-for="Type" class="form-control" asp-items="Html.GetEnumSelectList<Geekspace.Models.ResourceType>()"></select>
-                <span asp-validation-for="Type" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="MediaUrl" class="control-label"></label>
-                <input asp-for="MediaUrl" class="form-control" placeholder="/media/videos/example.mp4 or /media/images/example.jpg" />
-                <small style="color:#6c757d;">Enter a relative path under wwwroot, e.g. /media/images/ctf-banner.jpg</small>
-                <span asp-validation-for="MediaUrl" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="CategoryId" class="control-label"></label>
-                <select asp-for="CategoryId" class ="form-control" asp-items="ViewBag.CategoryId"></select>
-            </div>
-            <div class="form-group">
-                <label asp-for="CreatedDate" class="control-label"></label>
-                <input asp-for="CreatedDate" class="form-control" />
-                <span asp-validation-for="CreatedDate" class="text-danger"></span>
-            </div>
-            <div class="form-group form-check">
-                <label class="form-check-label">
-                    <input class="form-check-input" asp-for="IsPublished" /> @Html.DisplayNameFor(model => model.IsPublished)
-                </label>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+<section class="form-page">
+    <div class="container form-container">
+        <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+            <a asp-action="Index">Learning Library</a><span>/</span><span>Create</span>
+        </nav>
+        <div class="form-heading">
+            <span class="eyebrow">Content administration</span>
+            <h1>Create a learning resource</h1>
+            <p>Add quality content to the public library or save it as a draft.</p>
+        </div>
+        <form asp-action="Create" class="form-card">
+            <partial name="_ResourceForm" model="Model" />
+            <div class="form-actions">
+                <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+                <button type="submit" class="btn btn-primary">Create resource</button>
             </div>
         </form>
     </div>
-</div>
+</section>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

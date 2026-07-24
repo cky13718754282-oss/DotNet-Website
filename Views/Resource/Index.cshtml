@@ -1,81 +1,127 @@
 @model IEnumerable<Geekspace.Models.LearningResource>
+@using Geekspace.Models
+@using Microsoft.AspNetCore.Mvc.Rendering
 
 @{
-    ViewData["Title"] = "Resource";
-}
-
-<h1>Resource</h1>
-
-@{
+    ViewData["Title"] = "Learning Library";
+    var resources = Model.ToList();
     var searchTerm = ViewData["Search"] as string;
-}
-@if (!string.IsNullOrWhiteSpace(searchTerm))
-{
-    <p class="text-muted">
-        @Model.Count() result(s) for <strong>&ldquo;@searchTerm&rdquo;</strong>.
-        <a asp-action="Index">Clear search</a>
-    </p>
+    var selectedCategoryId = ViewData["CategoryId"] as int?;
+    var selectedType = ViewData["Type"] as ResourceType?;
+    var categories = ViewBag.Categories as List<Category> ?? new List<Category>();
+    var isAdmin = User.IsInRole("Admin") || User.IsInRole("Root");
 }
 
-@if (User.IsInRole("Admin") || User.IsInRole("Root"))
-{
-    <p>
-        <a asp-action="Create" class="btn btn-primary btn-sm">Create New</a>
-    </p>
-}
+<section class="page-hero compact">
+    <div class="container">
+        <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+            <a asp-controller="Home" asp-action="Index">Home</a><span>/</span><span>Learning Library</span>
+        </nav>
+        <div class="page-hero-row">
+            <div>
+                <span class="eyebrow eyebrow-light">Curated learning</span>
+                <h1>Learning Library</h1>
+                <p>Explore practical resources for every stage of your cybersecurity journey.</p>
+            </div>
+            @if (isAdmin)
+            {
+                <a asp-action="Create" class="btn btn-accent btn-lg">+ Add resource</a>
+            }
+        </div>
+    </div>
+</section>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Title)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Description)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Type)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Category)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.CreatedDate)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Title)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Type)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Category.Name)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.CreatedDate)
-            </td>
-            <td>
-                @if (User.IsInRole("Admin") || User.IsInRole("Root"))
+<section class="section-block library-section">
+    <div class="container">
+        <form asp-action="Index" method="get" class="filter-panel">
+            <div class="filter-search">
+                <label for="librarySearch">Search the library</label>
+                <input id="librarySearch" class="form-control" type="search" name="search"
+                       value="@searchTerm" placeholder="Try “phishing”, “Python” or “CTF”" />
+            </div>
+            <div>
+                <label for="categoryFilter">Topic</label>
+                @Html.DropDownList(
+                    "categoryId",
+                    new SelectList(categories, "Id", "Name", selectedCategoryId),
+                    "All topics",
+                    new { @class = "form-select", id = "categoryFilter" })
+            </div>
+            <div>
+                <label for="typeFilter">Format</label>
+                @Html.DropDownList(
+                    "type",
+                    new SelectList(Enum.GetValues<ResourceType>(), selectedType),
+                    "All formats",
+                    new { @class = "form-select", id = "typeFilter" })
+            </div>
+            <div class="filter-actions">
+                <button class="btn btn-primary" type="submit">Apply filters</button>
+                <a asp-action="Index" class="btn btn-outline-secondary">Reset</a>
+            </div>
+        </form>
+
+        <div class="results-bar">
+            <p><strong>@resources.Count</strong> resource@(resources.Count == 1 ? "" : "s") found</p>
+            @if (!string.IsNullOrWhiteSpace(searchTerm))
+            {
+                <span>Results for “@searchTerm”</span>
+            }
+        </div>
+
+        @if (!resources.Any())
+        {
+            <div class="empty-state">
+                <span class="empty-icon" aria-hidden="true">⌕</span>
+                <h2>No matching resources</h2>
+                <p>Try a broader keyword or clear one of the filters.</p>
+                <a asp-action="Index" class="btn btn-primary">Clear all filters</a>
+            </div>
+        }
+        else
+        {
+            <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
+                @foreach (var item in resources)
                 {
-                    <a asp-action="Details" asp-route-id="@item.Id">View</a> <text> | </text>
-                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> <text> | </text>
-                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    var hasImage = !string.IsNullOrWhiteSpace(item.MediaUrl) &&
+                        new[] { ".jpg", ".jpeg", ".png", ".webp" }.Contains(System.IO.Path.GetExtension(item.MediaUrl).ToLowerInvariant());
+                    <div class="col">
+                        <article class="resource-card">
+                            @if (isAdmin && !item.IsPublished)
+                            {
+                                <span class="draft-ribbon">Draft</span>
+                            }
+                            <a class="resource-media" asp-action="Details" asp-route-id="@item.Id">
+                                @if (hasImage)
+                                {
+                                    <img src="@item.MediaUrl" alt="" />
+                                }
+                                else
+                                {
+                                    <span class="resource-placeholder">@item.Type.ToString().Substring(0, 1)</span>
+                                }
+                                <span class="type-pill">@item.Type</span>
+                            </a>
+                            <div class="resource-card-body">
+                                <span class="resource-topic">@(item.Category?.Name ?? "Uncategorised")</span>
+                                <h2><a asp-action="Details" asp-route-id="@item.Id">@item.Title</a></h2>
+                                <p>@item.Description</p>
+                                <div class="resource-card-footer">
+                                    <span>@item.CreatedDate.ToString("dd MMM yyyy")</span>
+                                    <a asp-action="Details" asp-route-id="@item.Id">Open →</a>
+                                </div>
+                                @if (isAdmin)
+                                {
+                                    <div class="admin-card-actions">
+                                        <a asp-action="Edit" asp-route-id="@item.Id">Edit</a>
+                                        <a asp-action="Delete" asp-route-id="@item.Id" class="text-danger">Delete</a>
+                                    </div>
+                                }
+                            </div>
+                        </article>
+                    </div>
                 }
-                else
-                {
-                    <a asp-action="Details" asp-route-id="@item.Id">View</a>
-                }
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+            </div>
+        }
+    </div>
+</section>

@@ -1,0 +1,74 @@
+@model int
+
+<section class="interactive-module assessment-module" data-self-assessment data-resource-id="@Model" aria-labelledby="assessment-title">
+    <div class="module-header">
+        <div>
+            <span class="module-label">Knowledge check</span>
+            <h2 id="assessment-title">TCP/IP Fundamentals Self‑Assessment</h2>
+            <p>Answer all five questions. Your result is calculated in this browser and is not saved to the database.</p>
+        </div>
+        <div class="assessment-counter"><strong>5</strong><span>questions</span></div>
+    </div>
+
+    <form class="assessment-form" data-assessment-form>
+        <fieldset class="assessment-question" data-correct="443">
+            <legend><span>01</span>Which port is normally used by HTTPS?</legend>
+            <label><input type="radio" name="tcp-q1-@Model" value="22" /> Port 22</label>
+            <label><input type="radio" name="tcp-q1-@Model" value="53" /> Port 53</label>
+            <label><input type="radio" name="tcp-q1-@Model" value="80" /> Port 80</label>
+            <label><input type="radio" name="tcp-q1-@Model" value="443" /> Port 443</label>
+            <p class="answer-explanation" hidden>HTTPS normally uses TCP port 443 for encrypted web traffic.</p>
+        </fieldset>
+
+        <fieldset class="assessment-question" data-correct="syn-synack-ack">
+            <legend><span>02</span>What is the correct TCP three-way handshake sequence?</legend>
+            <label><input type="radio" name="tcp-q2-@Model" value="ack-syn-fin" /> ACK → SYN → FIN</label>
+            <label><input type="radio" name="tcp-q2-@Model" value="syn-synack-ack" /> SYN → SYN-ACK → ACK</label>
+            <label><input type="radio" name="tcp-q2-@Model" value="syn-ack-fin" /> SYN → ACK → FIN</label>
+            <label><input type="radio" name="tcp-q2-@Model" value="ping-pong-ack" /> PING → PONG → ACK</label>
+            <p class="answer-explanation" hidden>The client sends SYN, the server replies SYN-ACK, and the client completes the connection with ACK.</p>
+        </fieldset>
+
+        <fieldset class="assessment-question" data-correct="dns">
+            <legend><span>03</span>Which protocol translates domain names into IP addresses?</legend>
+            <label><input type="radio" name="tcp-q3-@Model" value="ftp" /> FTP</label>
+            <label><input type="radio" name="tcp-q3-@Model" value="dns" /> DNS</label>
+            <label><input type="radio" name="tcp-q3-@Model" value="smtp" /> SMTP</label>
+            <label><input type="radio" name="tcp-q3-@Model" value="ssh" /> SSH</label>
+            <p class="answer-explanation" hidden>Domain Name System (DNS) resolves human-readable names to IP addresses.</p>
+        </fieldset>
+
+        <fieldset class="assessment-question" data-correct="reliable">
+            <legend><span>04</span>Which statement best describes TCP?</legend>
+            <label><input type="radio" name="tcp-q4-@Model" value="broadcast" /> It only sends broadcast traffic</label>
+            <label><input type="radio" name="tcp-q4-@Model" value="unreliable" /> It is connectionless and does not confirm delivery</label>
+            <label><input type="radio" name="tcp-q4-@Model" value="reliable" /> It provides reliable, ordered delivery</label>
+            <label><input type="radio" name="tcp-q4-@Model" value="encryption" /> It automatically encrypts every packet</label>
+            <p class="answer-explanation" hidden>TCP establishes a connection and provides ordered, reliable delivery with acknowledgements and retransmission.</p>
+        </fieldset>
+
+        <fieldset class="assessment-question" data-correct="22">
+            <legend><span>05</span>Which port is commonly associated with SSH?</legend>
+            <label><input type="radio" name="tcp-q5-@Model" value="21" /> Port 21</label>
+            <label><input type="radio" name="tcp-q5-@Model" value="22" /> Port 22</label>
+            <label><input type="radio" name="tcp-q5-@Model" value="25" /> Port 25</label>
+            <label><input type="radio" name="tcp-q5-@Model" value="110" /> Port 110</label>
+            <p class="answer-explanation" hidden>SSH commonly uses TCP port 22 for secure remote access.</p>
+        </fieldset>
+
+        <div class="assessment-validation alert alert-warning" data-assessment-validation hidden role="alert">
+            Please answer every question before submitting.
+        </div>
+        <div class="assessment-actions">
+            <button type="button" class="btn btn-outline-secondary" data-assessment-reset>Reset</button>
+            <button type="submit" class="btn btn-primary">Check answers</button>
+        </div>
+    </form>
+
+    <div class="module-result assessment-result" data-assessment-result hidden aria-live="polite">
+        <span class="result-mark" data-assessment-mark aria-hidden="true">✓</span>
+        <h3 data-assessment-heading>Assessment complete</h3>
+        <p data-assessment-score></p>
+        <button type="button" class="btn btn-primary" data-assessment-review>Review answers</button>
+    </div>
+</section>

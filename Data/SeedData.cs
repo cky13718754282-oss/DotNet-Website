@@ -80,8 +80,8 @@ namespace Geekspace.Data
                 new LearningResource
                 {
                     Title = "TCP/IP Fundamentals Self-Assessment",
-                    Description = "Test your understanding of the TCP/IP model, the three-way handshake, and common port numbers.",
-                    Content = "This self-assessment covers the four-layer TCP/IP model, how the TCP three-way handshake establishes a connection, and the well-known port numbers used by common services such as HTTP (80), HTTPS (443), SSH (22), and DNS (53).",
+                    Description = "Complete a five-question knowledge check covering ports, DNS, reliable delivery, and the TCP three-way handshake.",
+                    Content = "Use the interactive assessment below to check your understanding of TCP/IP fundamentals. Answer all five questions, submit your responses, and review the explanation shown beneath each answer. Your score is calculated in the browser and is not stored in the database.",
                     Type = ResourceType.SelfAssessment,
                     CategoryId = networking.Id,
                     CreatedDate = DateTime.Now.AddDays(-6),
@@ -90,8 +90,8 @@ namespace Geekspace.Data
                 new LearningResource
                 {
                     Title = "Virtual Lab: Setting Up a Home Pentest Environment",
-                    Description = "A guided virtual lab walking through building an isolated environment for practicing penetration testing safely.",
-                    Content = "This virtual lab guides you through setting up an isolated network using virtualization software, deploying a deliberately vulnerable target machine, and configuring an attacker machine with common security tools. Always practice only on systems you own or are explicitly authorized to test.",
+                    Description = "Follow a six-step guided lab to prepare an isolated and recoverable environment for authorised security practice.",
+                    Content = "Work through the practical checklist below on your own computer. You will prepare a virtualisation platform, create an isolated network, import practice machines, verify private connectivity, and create a clean snapshot. Progress is saved only in this browser. Always practise only on systems you own or are explicitly authorised to test.",
                     Type = ResourceType.VirtualLab,
                     CategoryId = ctf.Id,
                     CreatedDate = DateTime.Now.AddDays(-4),
@@ -110,8 +110,8 @@ namespace Geekspace.Data
                 new LearningResource
                 {
                     Title = "Simulation: Phishing Email Detection",
-                    Description = "An interactive simulation that presents realistic emails and asks you to identify phishing indicators.",
-                    Content = "This simulation presents a series of realistic-looking emails and challenges you to spot red flags such as spoofed sender addresses, urgency tactics, mismatched links, and suspicious attachments — skills that directly translate to real-world inbox hygiene.",
+                    Description = "Analyse three realistic inbox scenarios, classify each message, and learn the warning signs behind every decision.",
+                    Content = "The interactive inbox challenge below presents three realistic messages. Inspect the sender domain, wording, requested action, and destination link before deciding whether each email is phishing or legitimate. Immediate feedback explains the security signals, and a final score summarises your performance.",
                     Type = ResourceType.Simulation,
                     CategoryId = basics.Id,
                     CreatedDate = DateTime.Now.AddDays(-1),

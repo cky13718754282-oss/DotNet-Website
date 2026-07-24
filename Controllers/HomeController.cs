@@ -22,11 +22,19 @@ public class HomeController : Controller
     public async Task<IActionResult> Index()
     {
         var latestResources = await _context.LearningResources
-        .Include(r => r.Category)
-        .Where(r => r.IsPublished)
-        .OrderByDescending(r => r.CreatedDate)
-        .Take(6)
-        .ToListAsync();
+            .Include(r => r.Category)
+            .Where(r => r.IsPublished)
+            .OrderByDescending(r => r.CreatedDate)
+            .Take(6)
+            .ToListAsync();
+
+        ViewBag.ResourceCount = await _context.LearningResources.CountAsync(r => r.IsPublished);
+        ViewBag.CategoryCount = await _context.Categories.CountAsync();
+        ViewBag.CommentCount = await _context.ResourceComments.CountAsync();
+        ViewBag.Categories = await _context.Categories
+            .Include(c => c.Resources)
+            .OrderBy(c => c.Name)
+            .ToListAsync();
 
         return View(latestResources);
     }

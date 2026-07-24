@@ -1,38 +1,24 @@
 @model Geekspace.Models.Category
+@{ ViewData["Title"] = "Create Topic"; }
 
-@{
-    ViewData["Title"] = "Create";
-}
-
-<h1>Create</h1>
-
-<h4>Category</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Create">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
-                <input asp-for="Description" class="form-control" />
-                <span asp-validation-for="Description" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Create" class="btn btn-primary" />
+<section class="form-page">
+    <div class="container narrow-container">
+        <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+            <a asp-action="Index">Topic Directory</a><span>/</span><span>Create</span>
+        </nav>
+        <div class="form-heading">
+            <span class="eyebrow">Content administration</span>
+            <h1>Create a topic</h1>
+            <p>Use a clear name and description to help learners navigate the library.</p>
+        </div>
+        <form asp-action="Create" class="form-card">
+            <partial name="_CategoryForm" model="Model" />
+            <div class="form-actions">
+                <a asp-action="Index" class="btn btn-outline-secondary">Cancel</a>
+                <button type="submit" class="btn btn-primary">Create topic</button>
             </div>
         </form>
     </div>
-</div>
+</section>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

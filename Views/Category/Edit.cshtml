@@ -1,39 +1,25 @@
 @model Geekspace.Models.Category
+@{ ViewData["Title"] = "Edit Topic"; }
 
-@{
-    ViewData["Title"] = "Edit";
-}
-
-<h1>Edit</h1>
-
-<h4>Category</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<section class="form-page">
+    <div class="container narrow-container">
+        <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+            <a asp-action="Index">Topic Directory</a><span>/</span><span>Edit</span>
+        </nav>
+        <div class="form-heading">
+            <span class="eyebrow">Content administration</span>
+            <h1>Edit topic</h1>
+            <p>Keep topic information concise and useful for learners.</p>
+        </div>
+        <form asp-action="Edit" class="form-card">
             <input type="hidden" asp-for="Id" />
-            <div class="form-group">
-                <label asp-for="Name" class="control-label"></label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Description" class="control-label"></label>
-                <input asp-for="Description" class="form-control" />
-                <span asp-validation-for="Description" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
+            <partial name="_CategoryForm" model="Model" />
+            <div class="form-actions">
+                <a asp-action="Details" asp-route-id="@Model.Id" class="btn btn-outline-secondary">Cancel</a>
+                <button type="submit" class="btn btn-primary">Save changes</button>
             </div>
         </form>
     </div>
-</div>
+</section>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
-
-@section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
-}
+@section Scripts { <partial name="_ValidationScriptsPartial" /> }

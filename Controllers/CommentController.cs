@@ -52,6 +52,7 @@ namespace Geekspace.Controllers
 
             _context.ResourceComments.Add(comment);
             await _context.SaveChangesAsync();
+            TempData["SuccessMessage"] = "Your comment was posted.";
 
             return RedirectToAction("Details", "Resource", new { id = learningResourceId });
         }
@@ -105,6 +106,7 @@ namespace Geekspace.Controllers
             int resourceId = comment.LearningResourceId;
             _context.ResourceComments.Remove(comment);
             await _context.SaveChangesAsync();
+            TempData["SuccessMessage"] = "Comment deleted.";
 
             return RedirectToAction("Details", "Resource", new { id = resourceId });
         }

@@ -1,0 +1,75 @@
+@model int
+
+<section class="interactive-module simulation-module" data-phishing-simulation data-resource-id="@Model" aria-labelledby="simulation-title">
+    <div class="module-header">
+        <div>
+            <span class="module-label">Interactive scenario</span>
+            <h2 id="simulation-title">Phishing Inbox Challenge</h2>
+            <p>Review each email as if it arrived in your inbox, then decide whether it is phishing or legitimate.</p>
+        </div>
+        <div class="module-progress" aria-live="polite">
+            <span data-simulation-progress>Scenario 1 of 3</span>
+            <strong data-simulation-score>Score: 0</strong>
+        </div>
+    </div>
+
+    <div class="inbox-simulator">
+        <div class="inbox-toolbar">
+            <span class="inbox-brand"><span aria-hidden="true">G</span> Geekspace Mail</span>
+            <span class="inbox-status">Security training inbox</span>
+        </div>
+        <article class="email-window" aria-live="polite">
+            <header class="email-header">
+                <div class="email-avatar" data-email-avatar aria-hidden="true">I</div>
+                <div>
+                    <h3 data-email-subject>Loading scenario…</h3>
+                    <p><strong>From:</strong> <span data-email-sender></span></p>
+                    <p><strong>To:</strong> student@apu.edu.my</p>
+                </div>
+            </header>
+            <div class="email-body" data-email-body></div>
+            <div class="link-preview">
+                <span>Link preview</span>
+                <code data-email-link></code>
+            </div>
+        </article>
+    </div>
+
+    <div class="decision-panel" data-decision-panel>
+        <div>
+            <strong>What is your assessment?</strong>
+            <span>Look closely at the sender, wording and destination link.</span>
+        </div>
+        <div class="decision-actions">
+            <button type="button" class="decision-btn decision-danger" data-simulation-choice="phishing">
+                Report as phishing
+            </button>
+            <button type="button" class="decision-btn decision-safe" data-simulation-choice="legitimate">
+                Mark as legitimate
+            </button>
+        </div>
+    </div>
+
+    <div class="scenario-feedback" data-simulation-feedback hidden aria-live="polite">
+        <div>
+            <span class="feedback-icon" data-feedback-icon aria-hidden="true"></span>
+            <div>
+                <h3 data-feedback-title></h3>
+                <p data-feedback-explanation></p>
+                <ul data-feedback-signals></ul>
+            </div>
+        </div>
+        <button type="button" class="btn btn-primary" data-simulation-next>Next scenario</button>
+    </div>
+
+    <div class="module-result" data-simulation-result hidden aria-live="polite">
+        <span class="result-mark" aria-hidden="true">✓</span>
+        <h3>Inbox challenge complete</h3>
+        <p data-simulation-result-text></p>
+        <button type="button" class="btn btn-primary" data-simulation-restart>Try again</button>
+    </div>
+
+    <noscript>
+        <div class="alert alert-warning mt-3">JavaScript is required to use this interactive simulation.</div>
+    </noscript>
+</section>

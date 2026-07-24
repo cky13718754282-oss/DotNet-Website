@@ -1,30 +1,66 @@
 @model Geekspace.Models.Category
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = Model.Name;
+    var resources = Model.Resources.OrderByDescending(r => r.CreatedDate).ToList();
+    var isAdmin = User.IsInRole("Admin") || User.IsInRole("Root");
 }
 
-<h1>Details</h1>
+<section class="page-hero compact">
+    <div class="container">
+        <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+            <a asp-controller="Home" asp-action="Index">Home</a><span>/</span>
+            <a asp-action="Index">Topics</a><span>/</span><span>@Model.Name</span>
+        </nav>
+        <div class="page-hero-row">
+            <div>
+                <span class="eyebrow eyebrow-light">Learning topic</span>
+                <h1>@Model.Name</h1>
+                <p>@Model.Description</p>
+            </div>
+            @if (isAdmin)
+            {
+                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-accent">Edit topic</a>
+            }
+        </div>
+    </div>
+</section>
 
-<div>
-    <h4>Category</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+<section class="section-block">
+    <div class="container">
+        <div class="section-heading">
+            <div>
+                <span class="eyebrow">Available material</span>
+                <h2>@resources.Count resource@(resources.Count == 1 ? "" : "s")</h2>
+            </div>
+            <a asp-controller="Resource" asp-action="Index" asp-route-categoryId="@Model.Id" class="text-link">Open filtered library →</a>
+        </div>
+
+        @if (!resources.Any())
+        {
+            <div class="empty-state">
+                <h3>No resources in this topic yet</h3>
+                <p>Check another topic or return later for new material.</p>
+            </div>
+        }
+        else
+        {
+            <div class="resource-list">
+                @foreach (var item in resources)
+                {
+                    <article class="resource-list-item">
+                        <span class="list-type">@item.Type</span>
+                        <div>
+                            <h3><a asp-controller="Resource" asp-action="Details" asp-route-id="@item.Id">@item.Title</a></h3>
+                            <p>@item.Description</p>
+                        </div>
+                        <div class="list-meta">
+                            <span>@item.CreatedDate.ToString("dd MMM yyyy")</span>
+                            <a asp-controller="Resource" asp-action="Details" asp-route-id="@item.Id">Open →</a>
+                        </div>
+                    </article>
+                }
+            </div>
+        }
+    </div>
+</section>

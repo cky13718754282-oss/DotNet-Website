@@ -25,7 +25,10 @@ namespace Geekspace.Controllers
         [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Categories.ToListAsync());
+            return View(await _context.Categories
+                .Include(c => c.Resources)
+                .OrderBy(c => c.Name)
+                .ToListAsync());
         }
 
         // GET: Category/Details/5
@@ -38,10 +41,19 @@ namespace Geekspace.Controllers
             }
 
             var category = await _context.Categories
+                .Include(c => c.Resources)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (category == null)
             {
                 return NotFound();
+            }
+
+            if (!User.IsInRole("Admin") && !User.IsInRole("Root"))
+            {
+                category.Resources = category.Resources
+                    .Where(r => r.IsPublished)
+                    .OrderByDescending(r => r.CreatedDate)
+                    .ToList();
             }
 
             return View(category);
@@ -64,6 +76,7 @@ namespace Geekspace.Controllers
             {
                 _context.Add(category);
                 await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Category created successfully.";
                 return RedirectToAction(nameof(Index));
             }
             return View(category);
@@ -103,6 +116,7 @@ namespace Geekspace.Controllers
                 {
                     _context.Update(category);
                     await _context.SaveChangesAsync();
+                    TempData["SuccessMessage"] = "Category updated successfully.";
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -150,6 +164,7 @@ namespace Geekspace.Controllers
             }
 
             await _context.SaveChangesAsync();
+            TempData["SuccessMessage"] = "Category deleted.";
             return RedirectToAction(nameof(Index));
         }
 

@@ -1,170 +1,162 @@
-﻿<!DOCTYPE html>
+@{
+    var currentController = ViewContext.RouteData.Values["controller"]?.ToString();
+}
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="utf-8" />
     <script>
-    (function () {
-        var savedTheme = localStorage.getItem('geekspace-theme');
-        document.documentElement.setAttribute('data-bs-theme', savedTheme || 'light');
-    })();
+        document.documentElement.setAttribute(
+            "data-bs-theme",
+            localStorage.getItem("geekspace-theme") || "light"
+        );
     </script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="view-transition" content="same-origin" />
-    <title>@ViewData["Title"] - Geekspace</title>
-    <script type="importmap"></script>
+    <meta name="description" content="Geekspace is a practical cybersecurity learning platform with articles, videos, labs and community discussions." />
+    <meta name="theme-color" content="#071226" />
+    <title>@ViewData["Title"] | Geekspace</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
-    <link rel="stylesheet" href="~/Geekspace.styles.css" asp-append-version="true" />
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-white border-bottom box-shadow mb-3">
-            <div class="container-fluid">
-                <a class="navbar-brand" asp-area="" asp-controller="Home" asp-action="Index">Geekspace</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+
+    <header class="site-header">
+        <div class="utility-bar">
+            <div class="container d-flex justify-content-between align-items-center">
+                <span>Practical cybersecurity learning, built for curious minds.</span>
+                <span class="d-none d-md-inline">Learn safely. Practise ethically.</span>
+            </div>
+        </div>
+        <nav class="navbar navbar-expand-lg" aria-label="Primary navigation">
+            <div class="container">
+                <a class="navbar-brand" asp-controller="Home" asp-action="Index" aria-label="Geekspace home">
+                    <span class="brand-mark" aria-hidden="true">G</span>
+                    <span>Geek<span>space</span></span>
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#primaryNav"
+                        aria-controls="primaryNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-                    <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                        <ul class="navbar-nav flex-grow-1">
+                <div class="collapse navbar-collapse" id="primaryNav">
+                    <ul class="navbar-nav mx-lg-auto">
+                        <li class="nav-item">
+                            <a class="nav-link @(currentController == "Home" ? "active" : "")"
+                               asp-controller="Home" asp-action="Index">Home</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(currentController == "Resource" ? "active" : "")"
+                               asp-controller="Resource" asp-action="Index">Learning Library</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link @(currentController == "Category" ? "active" : "")"
+                               asp-controller="Category" asp-action="Index">Topics</a>
+                        </li>
+                        @if (User.Identity?.IsAuthenticated == true)
+                        {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Resource" asp-action="Index">Resources</a>
+                                <a class="nav-link @(currentController == "Activity" ? "active" : "")"
+                                   asp-controller="Activity" asp-action="Index">My Activity</a>
                             </li>
+                        }
+                        @if (User.IsInRole("Admin") || User.IsInRole("Root"))
+                        {
                             <li class="nav-item">
-                                <a class="nav-link text-dark" asp-area="" asp-controller="Category" asp-action="Index">Categories</a>
+                                <a class="nav-link @(currentController == "AdminDashboard" ? "active" : "")"
+                                   asp-controller="AdminDashboard" asp-action="Index">Dashboard</a>
                             </li>
-                        </ul>
+                        }
+                    </ul>
 
-                        <div class="d-flex align-items-center">
-                            <form class="gs-search me-2" role="search" method="get" asp-controller="Resource" asp-action="Index">
-                                <span class="gs-search-icon" aria-hidden="true">
-                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none"
-                                         stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                        <circle cx="11" cy="11" r="7"></circle>
-                                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                                    </svg>
-                                </span>
-                                <input type="search" name="search" class="gs-search-input" placeholder="Search..."
-                                       aria-label="Search resources" value="@(Context.Request.Query["search"])" />
-                            </form>
-                            <button id="themeToggle" class="btn theme-toggle-btn me-2" type="button" title="Toggle light / dark theme">
-                                <span id="themeIcon">🌙</span>
-                            </button>
-                            <partial name="_LoginPartial" />
-                        </div>
+                    <div class="nav-actions">
+                        <form class="nav-search" role="search" method="get" asp-controller="Resource" asp-action="Index">
+                            <label class="visually-hidden" for="navSearch">Search resources</label>
+                            <span aria-hidden="true">⌕</span>
+                            <input id="navSearch" type="search" name="search" placeholder="Search library"
+                                   value="@(Context.Request.Query["search"])" />
+                        </form>
+                        <button id="themeToggle" class="icon-button" type="button"
+                                aria-label="Switch colour theme" title="Switch colour theme">
+                            <span id="themeIcon" aria-hidden="true">☾</span>
+                        </button>
+                        <partial name="_LoginPartial" />
                     </div>
+                </div>
             </div>
         </nav>
     </header>
-    <div class="container">
-        <main role="main" class="pb-3">
-            @RenderBody()
-        </main>
-    </div>
 
-    <footer class="border-top footer text-muted">
+    @if (TempData["SuccessMessage"] != null || TempData["ErrorMessage"] != null)
+    {
+        <div class="flash-message-wrap" aria-live="polite">
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="status">
+                    <strong>Success.</strong> @TempData["SuccessMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    <strong>Action required.</strong> @TempData["ErrorMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+        </div>
+    }
+
+    <main id="main-content" class="site-main" tabindex="-1">
+        @RenderBody()
+    </main>
+
+    <footer class="site-footer">
         <div class="container">
-            &copy; 2026 - Geekspace - <a asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
+            <div class="row g-4 py-5">
+                <div class="col-lg-5">
+                    <a class="footer-brand" asp-controller="Home" asp-action="Index">
+                        <span class="brand-mark" aria-hidden="true">G</span>
+                        Geekspace
+                    </a>
+                    <p class="footer-copy mt-3">
+                        A community learning system for building practical cybersecurity knowledge
+                        through trusted resources, hands-on activities and discussion.
+                    </p>
+                </div>
+                <div class="col-6 col-lg-3">
+                    <h2 class="footer-heading">Explore</h2>
+                    <ul class="footer-links">
+                        <li><a asp-controller="Resource" asp-action="Index">Learning Library</a></li>
+                        <li><a asp-controller="Category" asp-action="Index">Topic Directory</a></li>
+                        <li><a asp-controller="Home" asp-action="Privacy">Privacy</a></li>
+                    </ul>
+                </div>
+                <div class="col-6 col-lg-4">
+                    <h2 class="footer-heading">Member access</h2>
+                    <ul class="footer-links">
+                        @if (User.Identity?.IsAuthenticated == true)
+                        {
+                            <li><a asp-controller="Activity" asp-action="Index">Manage activity</a></li>
+                            <li><a asp-area="Identity" asp-page="/Account/Manage/Index">Account settings</a></li>
+                        }
+                        else
+                        {
+                            <li><a asp-area="Identity" asp-page="/Account/Register">Create an account</a></li>
+                            <li><a asp-area="Identity" asp-page="/Account/Login">Sign in</a></li>
+                        }
+                    </ul>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <span>&copy; 2026 Geekspace Learning System</span>
+                <span>Developed with ASP.NET Core and SQLite</span>
+            </div>
         </div>
     </footer>
+
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            var toggleBtn = document.getElementById('themeToggle');
-            var icon = document.getElementById('themeIcon');
-            var html = document.documentElement;
-
-            function updateIcon() {
-                icon.textContent = html.getAttribute('data-bs-theme') === 'dark' ? '☀️' : '🌙';
-            }
-            updateIcon();
-
-            function applyTheme(next) {
-                html.setAttribute('data-bs-theme', next);
-                localStorage.setItem('geekspace-theme', next);
-                updateIcon();
-            }
-
-            toggleBtn.addEventListener('click', function (event) {
-                var next = html.getAttribute('data-bs-theme') === 'dark' ? 'light' : 'dark';
-
-                // Fallback for browsers without View Transitions support:
-                // switch instantly, no circular reveal.
-                if (!document.startViewTransition) {
-                    applyTheme(next);
-                    return;
-                }
-
-                // Reveal origin. Prefer the actual pointer position; fall back
-                // to the button's centre when there is no pointer (e.g. the
-                // button was activated with the keyboard, where clientX/clientY
-                // are 0 and would otherwise start the circle at the top-left).
-                var rect = toggleBtn.getBoundingClientRect();
-                var x = event.clientX || (rect.left + rect.width / 2);
-                var y = event.clientY || (rect.top + rect.height / 2);
-
-                // Disable all CSS color transitions for the duration of the
-                // theme switch. Without this, elements with their own
-                // background/color transitions (cards, etc.) can be
-                // snapshotted mid-fade by the browser, which shows up as a
-                // brief flicker back to the old colors inside the circle.
-                html.classList.add('theme-transitioning');
-
-                var transition = document.startViewTransition(function () {
-                    applyTheme(next);
-                });
-
-                transition.ready.then(function () {
-                    // Chrome can capture the ENTIRE scrollable page as the
-                    // ::view-transition-new(root) snapshot instead of just the
-                    // visible viewport. When it does, that snapshot's coordinate
-                    // space is the whole document (not the viewport) and it is
-                    // taller/wider than the viewport - so a circle sized to the
-                    // viewport starts in the wrong spot and stops growing before
-                    // it reaches the real page edges (the "starts mid-top / dies
-                    // at ~80%" bug). Firefox snapshots only the viewport, so it
-                    // looked fine there.
-                    //
-                    // Measure the snapshot the browser actually produced and
-                    // adapt: when it is larger than the viewport, shift the
-                    // origin into document coordinates (add the scroll offset)
-                    // and size the radius to cover the whole snapshot.
-                    var snap = getComputedStyle(html, '::view-transition-new(root)');
-                    var snapW = parseFloat(snap.width) || window.innerWidth;
-                    var snapH = parseFloat(snap.height) || window.innerHeight;
-
-                    var fullPage = snapW > window.innerWidth + 1 || snapH > window.innerHeight + 1;
-                    var originX = fullPage ? x + window.scrollX : x;
-                    var originY = fullPage ? y + window.scrollY : y;
-
-                    var endRadius = Math.hypot(
-                        Math.max(originX, snapW - originX),
-                        Math.max(originY, snapH - originY)
-                    );
-
-                    html.animate(
-                        {
-                            clipPath: [
-                                'circle(0px at ' + originX + 'px ' + originY + 'px)',
-                                'circle(' + endRadius + 'px at ' + originX + 'px ' + originY + 'px)'
-                            ]
-                        },
-                        {
-                            duration: 550,
-                            easing: 'ease-in-out',
-                            pseudoElement: '::view-transition-new(root)'
-                        }
-                    );
-                });
-
-                transition.finished.then(function () {
-                    html.classList.remove('theme-transitioning');
-                });
-            });
-        });
-    </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

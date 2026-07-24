@@ -3,113 +3,249 @@
 
 @{
     ViewData["Title"] = Model.Title;
-}
-
-<article>
-    <header class="mb-3">
-        <h1 class="fw-bold display-6">@Model.Title</h1>
-        <p class="fs-5 text-muted mb-2">@Model.Type</p>
-        <p class="small text-muted mb-0">
-            <span>Category: @(Model.Category?.Name ?? "Uncategorized")</span>
-            <span class="mx-2">&middot;</span>
-            <span>Created Date: @Model.CreatedDate.ToString("d MMMM yyyy", System.Globalization.CultureInfo.GetCultureInfo("en-US"))</span>
-        </p>
-    </header>
-
-    <hr />
-
-    @if (!string.IsNullOrWhiteSpace(Model.MediaUrl))
-    {
-        var extension = System.IO.Path.GetExtension(Model.MediaUrl).ToLowerInvariant();
-        var videoExtensions = new[] { ".mp4", ".webm", ".ogg" };
-
-        <div class="mb-4">
-            @if (videoExtensions.Contains(extension))
-            {
-                <video controls preload="metadata" style="max-width:100%; border-radius:6px;">
-                    <source src="@Model.MediaUrl" type="video/@(extension.TrimStart('.'))" />
-                    Your browser does not support the video tag.
-                </video>
-            }
-            else
-            {
-                <figure class="figure">
-                    <img src="@Model.MediaUrl" class="figure-img img-fluid rounded" alt="@Model.Title illustration" />
-                    <figcaption class="figure-caption">@Model.Title</figcaption>
-                </figure>
-            }
-        </div>
-    }
-
-    <div class="p-3 mb-4 border rounded bg-body-tertiary">
-        @Model.Description
-    </div>
-
-    <div class="resource-content" style="white-space: pre-wrap;">@Model.Content</div>
-</article>
-
-<div class="mt-4 mb-2 d-flex gap-2">
-    @if (User.IsInRole("Admin") || User.IsInRole("Root"))
-    {
-        <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-outline-primary">Edit</a>
-    }
-    <a asp-action="Index" class="btn btn-outline-secondary">Back to List</a>
-</div>
-
-<hr />
-<h3>Discussion (@Model.Comments.Count())</h3>
-
-@if (TempData["CommentError"] != null)
-{
-    <div class="alert alert-danger">@TempData["CommentError"]</div>
-}
-
-@if (User.Identity != null && User.Identity.IsAuthenticated)
-{
-    <form asp-controller="Comment" asp-action="Create" method="post" class="mb-4">
-        @Html.AntiForgeryToken()
-        <input type="hidden" name="learningResourceId" value="@Model.Id" />
-        <div class="form-group">
-            <textarea name="content" class="form-control" rows="3" placeholder="Share your thoughts..." required></textarea>
-        </div>
-        <button type="submit" class="btn btn-primary mt-2">Post Comment</button>
-    </form>
-}
-else
-{
-    <p><a asp-area="Identity" asp-page="/Account/Login">Log in</a> to join the discussion.</p>
-}
-
-@{
-    var commentAuthors = ViewBag.CommentAuthors as Dictionary<string, string>;
-    var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
-}
-
-@foreach (var comment in Model.Comments.OrderByDescending(c => c.PostedDate))
-{
-    <div class="card mb-2">
-        <div class="card-body">
-            <p class="card-text">@comment.Content</p>
-            <small class="text-muted">
-                Posted by @(commentAuthors != null && commentAuthors.ContainsKey(comment.UserId) ? commentAuthors[comment.UserId] : "Unknown")
-                on @comment.PostedDate.ToString("g")
-            </small>
-
-@{
+    var commentAuthors = ViewBag.CommentAuthors as Dictionary<string, string> ?? new Dictionary<string, string>();
     var rootUserIds = ViewBag.RootUserIds as HashSet<string> ?? new HashSet<string>();
-    bool commentAuthorIsRoot = rootUserIds.Contains(comment.UserId);
-    bool canDeleteThisComment = comment.UserId == currentUserId ||
-                                 User.IsInRole("Root") ||
-                                 (User.IsInRole("Admin") && !commentAuthorIsRoot);
+    var currentUserId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+    var isSaved = ViewBag.IsSaved as bool? ?? false;
+    var isCompleted = ViewBag.IsCompleted as bool? ?? false;
+    var extension = System.IO.Path.GetExtension(Model.MediaUrl ?? "").ToLowerInvariant();
+    var isVideo = new[] { ".mp4", ".webm", ".ogg" }.Contains(extension);
+    var learningMode = Model.Type switch
+    {
+        Geekspace.Models.ResourceType.Simulation => "Scenario decision",
+        Geekspace.Models.ResourceType.SelfAssessment => "Knowledge check",
+        Geekspace.Models.ResourceType.VirtualLab => "Guided practical",
+        Geekspace.Models.ResourceType.Video => "Watch and reflect",
+        _ => "Independent reading"
+    };
+    var estimatedTime = Model.Type switch
+    {
+        Geekspace.Models.ResourceType.Simulation => "5-7 minutes",
+        Geekspace.Models.ResourceType.SelfAssessment => "5 minutes",
+        Geekspace.Models.ResourceType.VirtualLab => "30-45 minutes",
+        Geekspace.Models.ResourceType.Video => "10-15 minutes",
+        _ => "8-12 minutes"
+    };
+    var progressStorage = Model.Type switch
+    {
+        Geekspace.Models.ResourceType.VirtualLab => "This browser only",
+        Geekspace.Models.ResourceType.Simulation => "Session only",
+        Geekspace.Models.ResourceType.SelfAssessment => "Not stored",
+        _ => "Not applicable"
+    };
 }
-@if (User.Identity != null && User.Identity.IsAuthenticated && canDeleteThisComment)
 
+<section class="detail-hero">
+    <div class="container">
+        <nav class="breadcrumb-nav breadcrumb-light" aria-label="Breadcrumb">
+            <a asp-controller="Home" asp-action="Index">Home</a><span>/</span>
+            <a asp-action="Index">Library</a><span>/</span>
+            <span>@Model.Title</span>
+        </nav>
+        <div class="detail-heading">
+            <span class="type-pill static">@Model.Type</span>
+            <h1>@Model.Title</h1>
+            <p>@Model.Description</p>
+            <div class="detail-meta">
+                <span>@(Model.Category?.Name ?? "Uncategorised")</span>
+                <span>@Model.CreatedDate.ToString("dd MMMM yyyy")</span>
+                <span>@Model.Comments.Count comment@(Model.Comments.Count == 1 ? "" : "s")</span>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="section-block">
+    <div class="container">
+        <div class="content-layout">
+            <article class="article-panel">
+                @if (!string.IsNullOrWhiteSpace(Model.MediaUrl))
+                {
+                    <figure class="resource-feature">
+                        @if (isVideo)
+                        {
+                            <video controls preload="metadata">
+                                <source src="@Model.MediaUrl" type="video/@extension.TrimStart('.')" />
+                                Your browser does not support embedded video.
+                            </video>
+                        }
+                        else
+                        {
+                            <img src="@Model.MediaUrl" alt="@Model.Title illustration" />
+                        }
+                        <figcaption>Supporting media for @Model.Title</figcaption>
+                    </figure>
+                }
+
+                <div class="article-intro">
+                    <strong>What you will learn</strong>
+                    <p>@Model.Description</p>
+                </div>
+                <div class="resource-content">@Model.Content</div>
+            </article>
+
+            <aside class="detail-sidebar" aria-label="Resource actions">
+                <div class="sidebar-card">
+                    <span class="eyebrow">Resource details</span>
+                    <dl>
+                        <div><dt>Format</dt><dd>@Model.Type</dd></div>
+                        <div><dt>Topic</dt><dd>@(Model.Category?.Name ?? "Uncategorised")</dd></div>
+                        <div><dt>Learning mode</dt><dd>@learningMode</dd></div>
+                        <div><dt>Estimated time</dt><dd>@estimatedTime</dd></div>
+                        <div><dt>Progress</dt><dd>@progressStorage</dd></div>
+                        <div><dt>Status</dt><dd>@(Model.IsPublished ? "Published" : "Draft")</dd></div>
+                    </dl>
+                    @if (User.Identity?.IsAuthenticated == true)
+                    {
+                        <div class="learning-actions">
+                            <form asp-controller="LearningProgress" asp-action="ToggleSaved" method="post">
+                                <input type="hidden" name="resourceId" value="@Model.Id" />
+                                <button type="submit" class="btn @(isSaved ? "btn-saved" : "btn-outline-primary") w-100">
+                                    @(isSaved ? "★ Saved to My Activity" : "☆ Save for later")
+                                </button>
+                            </form>
+                            <form asp-controller="LearningProgress" asp-action="ToggleCompleted" method="post">
+                                <input type="hidden" name="resourceId" value="@Model.Id" />
+                                <button type="submit" class="btn @(isCompleted ? "btn-completed" : "btn-outline-success") w-100">
+                                    @(isCompleted ? "✓ Completed" : "Mark as completed")
+                                </button>
+                            </form>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="learning-signin-note">
+                            <strong>Track your progress</strong>
+                            <p>Sign in to save this resource and mark it as completed.</p>
+                            <a asp-area="Identity" asp-page="/Account/Login" class="text-link">Sign in →</a>
+                        </div>
+                    }
+                    @if (User.IsInRole("Admin") || User.IsInRole("Root"))
+                    {
+                        <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary w-100">Edit resource</a>
+                    }
+                    <a asp-action="Index" class="btn btn-outline-secondary w-100 mt-2">Back to library</a>
+                </div>
+                <div class="safety-note">
+                    <strong>Practise ethically</strong>
+                    <p>Only test security techniques on systems you own or have permission to assess.</p>
+                </div>
+            </aside>
+        </div>
+    </div>
+</section>
+
+@if (Model.Type == Geekspace.Models.ResourceType.Simulation)
+{
+    <section class="interactive-section">
+        <div class="container">
+            <partial name="_PhishingSimulation" model="Model.Id" />
+        </div>
+    </section>
+}
+else if (Model.Type == Geekspace.Models.ResourceType.SelfAssessment)
+{
+    <section class="interactive-section">
+        <div class="container">
+            <partial name="_SelfAssessment" model="Model.Id" />
+        </div>
+    </section>
+}
+else if (Model.Type == Geekspace.Models.ResourceType.VirtualLab)
+{
+    <section class="interactive-section">
+        <div class="container">
+            <partial name="_VirtualLab" model="Model.Id" />
+        </div>
+    </section>
+}
+
+<section class="discussion-section" id="discussion">
+    <div class="container discussion-wrap">
+        <div class="section-heading">
+            <div>
+                <span class="eyebrow">Member discussion</span>
+                <h2>@Model.Comments.Count contribution@(Model.Comments.Count == 1 ? "" : "s")</h2>
+            </div>
+        </div>
+
+        @if (TempData["CommentError"] != null)
+        {
+            <div class="alert alert-danger" role="alert">@TempData["CommentError"]</div>
+        }
+
+        @if (User.Identity?.IsAuthenticated == true)
+        {
+            <form asp-controller="Comment" asp-action="Create" method="post" class="comment-form">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="learningResourceId" value="@Model.Id" />
+                <label for="commentContent">Share an insight or ask a question</label>
+                <textarea id="commentContent" name="content" class="form-control" rows="4"
+                          maxlength="1000" data-character-count placeholder="Keep the discussion constructive and relevant." required></textarea>
+                <div class="comment-form-footer">
+                    <small><span data-character-output>0</span>/1000 characters</small>
+                    <button type="submit" class="btn btn-primary">Post comment</button>
+                </div>
+            </form>
+        }
+        else
+        {
+            <div class="login-prompt">
+                <div>
+                    <h3>Join the conversation</h3>
+                    <p>Sign in or create an account to contribute to this discussion.</p>
+                </div>
+                <a asp-area="Identity" asp-page="/Account/Login" class="btn btn-primary">Sign in</a>
+            </div>
+        }
+
+        <div class="comment-list">
+            @if (!Model.Comments.Any())
             {
-                <form asp-controller="Comment" asp-action="Delete" asp-route-id="@comment.Id" method="post" class="d-inline">
-                    @Html.AntiForgeryToken()
-                    <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
-                </form>
+                <div class="empty-state compact">
+                    <h3>Start the discussion</h3>
+                    <p>There are no comments yet. Be the first to share a useful thought.</p>
+                </div>
+            }
+            @foreach (var comment in Model.Comments.OrderByDescending(c => c.PostedDate))
+            {
+                var author = commentAuthors.TryGetValue(comment.UserId, out var authorName) ? authorName : "Former member";
+                var canDelete = comment.UserId == currentUserId ||
+                    User.IsInRole("Root") ||
+                    (User.IsInRole("Admin") && !rootUserIds.Contains(comment.UserId));
+                <article class="comment-card">
+                    <div class="comment-avatar" aria-hidden="true">@author.Substring(0, 1).ToUpperInvariant()</div>
+                    <div class="comment-body">
+                        <div class="comment-header">
+                            <div><strong>@author</strong><span>@comment.PostedDate.ToString("dd MMM yyyy, HH:mm")</span></div>
+                            @if (User.Identity?.IsAuthenticated == true && canDelete)
+                            {
+                                <form asp-controller="Comment" asp-action="Delete" asp-route-id="@comment.Id" method="post"
+                                      data-confirm="Delete this comment?">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-sm btn-link text-danger">Delete</button>
+                                </form>
+                            }
+                        </div>
+                        <p>@comment.Content</p>
+                    </div>
+                </article>
             }
         </div>
     </div>
+</section>
+
+@section Scripts {
+    @if (Model.Type == Geekspace.Models.ResourceType.Simulation)
+    {
+        <script src="~/js/phishing-simulation.js" asp-append-version="true"></script>
+    }
+    else if (Model.Type == Geekspace.Models.ResourceType.SelfAssessment)
+    {
+        <script src="~/js/self-assessment.js" asp-append-version="true"></script>
+    }
+    else if (Model.Type == Geekspace.Models.ResourceType.VirtualLab)
+    {
+        <script src="~/js/virtual-lab.js" asp-append-version="true"></script>
+    }
 }

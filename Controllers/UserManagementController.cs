@@ -66,6 +66,7 @@ namespace Geekspace.Controllers
             }
 
             await _userManager.AddToRoleAsync(target, "Admin");
+            TempData["SuccessMessage"] = $"{target.Email} was promoted to Admin.";
             return RedirectToAction(nameof(Index));
         }
 
@@ -91,6 +92,7 @@ namespace Geekspace.Controllers
             }
 
             await _userManager.RemoveFromRoleAsync(target, "Admin");
+            TempData["SuccessMessage"] = $"{target.Email} was changed to a regular user.";
             return RedirectToAction(nameof(Index));
         }
 
@@ -129,6 +131,7 @@ namespace Geekspace.Controllers
             }
 
             await _userManager.DeleteAsync(target);
+            TempData["SuccessMessage"] = $"{target.Email} was deleted.";
             return RedirectToAction(nameof(Index));
         }
     }

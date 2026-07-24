@@ -25,14 +25,17 @@ namespace Geekspace.Controllers
 
         // GET: Resource
         [AllowAnonymous]
-        public async Task<IActionResult> Index(string? search)
+        public async Task<IActionResult> Index(string? search, int? categoryId, ResourceType? type)
         {
             var resources = _context.LearningResources
                 .Include(l => l.Category)
                 .AsQueryable();
 
-            // Filter by the navbar search box when a term is supplied.
-            // ToLower() keeps the match case-insensitive across providers.
+            if (!User.IsInRole("Admin") && !User.IsInRole("Root"))
+            {
+                resources = resources.Where(r => r.IsPublished);
+            }
+
             if (!string.IsNullOrWhiteSpace(search))
             {
                 var term = search.Trim().ToLower();
@@ -43,8 +46,22 @@ namespace Geekspace.Controllers
                     (r.Category != null && r.Category.Name.ToLower().Contains(term)));
             }
 
+            if (categoryId.HasValue)
+            {
+                resources = resources.Where(r => r.CategoryId == categoryId.Value);
+            }
+
+            if (type.HasValue)
+            {
+                resources = resources.Where(r => r.Type == type.Value);
+            }
+
             ViewData["Search"] = search;
-            return View(await resources.ToListAsync());
+            ViewData["CategoryId"] = categoryId;
+            ViewData["Type"] = type;
+            ViewBag.Categories = await _context.Categories.OrderBy(c => c.Name).ToListAsync();
+
+            return View(await resources.OrderByDescending(r => r.CreatedDate).ToListAsync());
         }
 
 
@@ -68,6 +85,7 @@ namespace Geekspace.Controllers
             {
                 _context.Add(learningResource);
                 await _context.SaveChangesAsync();
+                TempData["SuccessMessage"] = "Learning resource created successfully.";
                 return RedirectToAction(nameof(Index));
             }
             ViewData["CategoryId"] = new SelectList(_context.Categories, "Id", "Name", learningResource.CategoryId);
@@ -111,6 +129,7 @@ namespace Geekspace.Controllers
                 {
                     _context.Update(learningResource);
                     await _context.SaveChangesAsync();
+                    TempData["SuccessMessage"] = "Learning resource updated successfully.";
                 }
                 catch (DbUpdateConcurrencyException)
                 {
@@ -147,6 +166,13 @@ namespace Geekspace.Controllers
                 return NotFound();
             }
 
+            if (!learningResource.IsPublished &&
+                !User.IsInRole("Admin") &&
+                !User.IsInRole("Root"))
+            {
+                return NotFound();
+            }
+
             // Build a lookup of user id -> display name so the view can show
             // who posted each comment without an extra navigation property.
             var userIds = learningResource.Comments.Select(c => c.UserId).Distinct().ToList();
@@ -169,6 +195,19 @@ namespace Geekspace.Controllers
                 }
             }
             ViewBag.RootUserIds = rootUserIds;
+
+            var currentUserId = _userManager.GetUserId(User);
+            if (currentUserId != null)
+            {
+                var progress = await _context.UserLearningProgresses
+                    .AsNoTracking()
+                    .SingleOrDefaultAsync(item =>
+                        item.UserId == currentUserId &&
+                        item.LearningResourceId == learningResource.Id);
+
+                ViewBag.IsSaved = progress?.IsSaved ?? false;
+                ViewBag.IsCompleted = progress?.IsCompleted ?? false;
+            }
 
             return View(learningResource);
         }
@@ -206,6 +245,7 @@ namespace Geekspace.Controllers
             }
 
             await _context.SaveChangesAsync();
+            TempData["SuccessMessage"] = "Learning resource deleted.";
             return RedirectToAction(nameof(Index));
         }
 

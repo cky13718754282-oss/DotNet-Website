@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Geekspace.Data;
+using Geekspace.ViewModels;
 
 namespace Geekspace.Controllers
 {
@@ -88,7 +89,18 @@ namespace Geekspace.Controllers
             ViewBag.IsRoot = isRoot;
             ViewBag.IsAdmin = isAdmin;
 
-            return View(comments);
+            var learningItems = await _context.UserLearningProgresses
+                .Include(item => item.LearningResource)
+                    .ThenInclude(resource => resource!.Category)
+                .Where(item => item.UserId == currentUserId)
+                .OrderByDescending(item => item.LastUpdated)
+                .ToListAsync();
+
+            return View(new ActivityIndexViewModel
+            {
+                Comments = comments,
+                LearningItems = learningItems
+            });
         }
     }
 }

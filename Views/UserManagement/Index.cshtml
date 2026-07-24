@@ -4,62 +4,76 @@
     ViewData["Title"] = "Manage Users";
 }
 
-<h1>Manage Users</h1>
+<section class="page-hero compact">
+    <div class="container">
+        <nav class="breadcrumb-nav" aria-label="Breadcrumb">
+            <a asp-controller="Home" asp-action="Index">Home</a><span>/</span><span>User administration</span>
+        </nav>
+        <span class="eyebrow eyebrow-light">Administrator module</span>
+        <h1>User Management</h1>
+        <p>Manage registered accounts and apply role-based access controls.</p>
+    </div>
+</section>
 
-@if (TempData["UserManagementError"] != null)
-{
-    <div class="alert alert-danger">@TempData["UserManagementError"]</div>
-}
+<section class="section-block">
+    <div class="container">
+        <div class="admin-summary">
+            <div><strong>@Model.Count</strong><span>registered accounts</span></div>
+            <div><strong>@Model.Count(u => u.Role == "Admin")</strong><span>administrators</span></div>
+            <div><strong>@Model.Count(u => u.Role == "User")</strong><span>members</span></div>
+        </div>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Email</th>
-            <th>Role</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var u in Model)
+        @if (TempData["UserManagementError"] != null)
         {
-            <tr>
-                <td>@u.Email</td>
-                <td>
-                    <span class="badge @(u.Role == "Root" ? "bg-danger" : u.Role == "Admin" ? "bg-warning text-dark" : "bg-secondary")">
-                        @u.Role
-                    </span>
-                </td>
-                <td>
-                    @if (u.Role == "User")
-                    {
-                        <form asp-action="PromoteToAdmin" asp-route-id="@u.Id" method="post" class="d-inline">
-                            @Html.AntiForgeryToken()
-                            <button type="submit" class="btn btn-sm btn-success">Promote to Admin</button>
-                        </form>
-                    }
-
-                    @if (u.Role == "Admin" && User.IsInRole("Root"))
-                    {
-                        <form asp-action="DemoteToUser" asp-route-id="@u.Id" method="post" class="d-inline">
-                            @Html.AntiForgeryToken()
-                            <button type="submit" class="btn btn-sm btn-warning">Demote to User</button>
-                        </form>
-                    }
-
-                    @{
-                        bool canDelete = u.Role != "Root" &&
-                            (User.IsInRole("Root") || (User.IsInRole("Admin") && u.Role == "User"));
-                    }
-                    @if (canDelete)
-                    {
-                        <form asp-action="Delete" asp-route-id="@u.Id" method="post" class="d-inline"
-                              onsubmit="return confirm('Delete this account? This cannot be undone.');">
-                            @Html.AntiForgeryToken()
-                            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
-                        </form>
-                    }
-                </td>
-            </tr>
+            <div class="alert alert-danger" role="alert">@TempData["UserManagementError"]</div>
         }
-    </tbody>
-</table>
+
+        <div class="table-card">
+            <div class="table-responsive">
+                <table class="table align-middle mb-0">
+                    <thead><tr><th>Account</th><th>Role</th><th class="text-end">Available actions</th></tr></thead>
+                    <tbody>
+                    @foreach (var user in Model)
+                    {
+                        var roleClass = user.Role == "Root" ? "role-root" : user.Role == "Admin" ? "role-admin" : "role-user";
+                        <tr>
+                            <td><strong>@user.Email</strong></td>
+                            <td><span class="role-badge @roleClass">@user.Role</span></td>
+                            <td>
+                                <div class="user-actions">
+                                    @if (user.Role == "User")
+                                    {
+                                        <form asp-action="PromoteToAdmin" asp-route-id="@user.Id" method="post">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-sm btn-outline-primary">Promote</button>
+                                        </form>
+                                    }
+                                    @if (user.Role == "Admin" && User.IsInRole("Root"))
+                                    {
+                                        <form asp-action="DemoteToUser" asp-route-id="@user.Id" method="post">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-sm btn-outline-secondary">Demote</button>
+                                        </form>
+                                    }
+                                    @{
+                                        var canDelete = user.Role != "Root" &&
+                                            (User.IsInRole("Root") || (User.IsInRole("Admin") && user.Role == "User"));
+                                    }
+                                    @if (canDelete)
+                                    {
+                                        <form asp-action="Delete" asp-route-id="@user.Id" method="post"
+                                              data-confirm="Delete this account? This action cannot be undone.">
+                                            @Html.AntiForgeryToken()
+                                            <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+                                        </form>
+                                    }
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</section>

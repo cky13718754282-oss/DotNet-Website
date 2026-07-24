@@ -1,61 +1,55 @@
-﻿@using Microsoft.AspNetCore.Identity
+@using Microsoft.AspNetCore.Identity
 @inject SignInManager<IdentityUser> SignInManager
 @inject UserManager<IdentityUser> UserManager
 
 @if (SignInManager.IsSignedIn(User))
 {
     var currentUser = await UserManager.GetUserAsync(User);
-    string roleLabel = "User";
-    string roleClass = "text-success";
+    var roleLabel = "Member";
 
-    if (currentUser != null)
+    if (currentUser != null && await UserManager.IsInRoleAsync(currentUser, "Root"))
     {
-        if (await UserManager.IsInRoleAsync(currentUser, "Root"))
-        {
-            roleLabel = "Root";
-            roleClass = "text-danger";
-        }
-        else if (await UserManager.IsInRoleAsync(currentUser, "Admin"))
-        {
-            roleLabel = "Admin";
-            roleClass = "text-primary";
-        }
+        roleLabel = "Root";
+    }
+    else if (currentUser != null && await UserManager.IsInRoleAsync(currentUser, "Admin"))
+    {
+        roleLabel = "Admin";
     }
 
-    <ul class="navbar-nav">
-        <li class="nav-item dropdown">
-            <a class="nav-link dropdown-toggle text-dark" href="#" id="accountDropdown"
-               role="button" data-bs-toggle="dropdown" aria-expanded="false">
-                @UserManager.GetUserName(User)
-            </a>
-            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="accountDropdown">
-                <li><h6 class="dropdown-header fw-bold @roleClass">@roleLabel</h6></li>
+    <div class="dropdown account-menu">
+        <button class="account-button dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+            <span class="account-avatar" aria-hidden="true">@(UserManager.GetUserName(User)?[0].ToString().ToUpperInvariant() ?? "U")</span>
+            <span class="account-label d-none d-xl-flex">
+                <small>@roleLabel</small>
+                <strong>@UserManager.GetUserName(User)</strong>
+            </span>
+        </button>
+        <ul class="dropdown-menu dropdown-menu-end">
+            <li><h6 class="dropdown-header">Signed in as @roleLabel</h6></li>
+            <li><a class="dropdown-item" asp-area="Identity" asp-page="/Account/Manage/Index">Account settings</a></li>
+            <li><a class="dropdown-item" asp-controller="Activity" asp-action="Index">Manage activity</a></li>
+            @if (roleLabel is "Admin" or "Root")
+            {
                 <li><hr class="dropdown-divider" /></li>
-                <li><a class="dropdown-item" asp-area="Identity" asp-page="/Account/Manage/Index">Manage Account</a></li>
-                <li><a class="dropdown-item" asp-area="" asp-controller="Activity" asp-action="Index">Manage Activity</a></li>
-                @if (roleLabel == "Admin" || roleLabel == "Root")
-                {
-                    <li><a class="dropdown-item" asp-area="" asp-controller="UserManagement" asp-action="Index">Manage Users</a></li>
-                }
-                <li><a class="dropdown-item" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a></li>
-                <li><hr class="dropdown-divider" /></li>
-                <li>
-                    <form asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
-                        <button id="logout" type="submit" class="dropdown-item">Logout</button>
-                    </form>
-                </li>
-            </ul>
-        </li>
-    </ul>
+                <li><h6 class="dropdown-header">Administration</h6></li>
+                <li><a class="dropdown-item" asp-controller="AdminDashboard" asp-action="Index">Dashboard</a></li>
+                <li><a class="dropdown-item" asp-controller="Resource" asp-action="Create">Create resource</a></li>
+                <li><a class="dropdown-item" asp-controller="UserManagement" asp-action="Index">Manage users</a></li>
+            }
+            <li><hr class="dropdown-divider" /></li>
+            <li>
+                <form asp-area="Identity" asp-page="/Account/Logout"
+                      asp-route-returnUrl="@Url.Action("Index", "Home", new { area = "" })">
+                    <button id="logout" type="submit" class="dropdown-item text-danger">Sign out</button>
+                </form>
+            </li>
+        </ul>
+    </div>
 }
 else
 {
-    <ul class="navbar-nav">
-        <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Register">Register</a>
-        </li>
-        <li class="nav-item">
-            <a class="nav-link text-dark" asp-area="Identity" asp-page="/Account/Login">Login</a>
-        </li>
-    </ul>
+    <div class="auth-links">
+        <a class="btn btn-link" asp-area="Identity" asp-page="/Account/Login">Sign in</a>
+        <a class="btn btn-primary" asp-area="Identity" asp-page="/Account/Register">Join free</a>
+    </div>
 }

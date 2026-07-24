@@ -1,0 +1,50 @@
+@model Geekspace.Models.LearningResource
+
+<div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+<div class="form-grid">
+    <div class="field-group span-2">
+        <label asp-for="Title" class="form-label"></label>
+        <input asp-for="Title" class="form-control" placeholder="A clear, descriptive resource title" />
+        <span asp-validation-for="Title" class="text-danger"></span>
+    </div>
+    <div class="field-group span-2">
+        <label asp-for="Description" class="form-label"></label>
+        <textarea asp-for="Description" class="form-control" rows="3"
+                  placeholder="Summarise what learners will gain from this resource"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+    <div class="field-group span-2">
+        <label asp-for="Content" class="form-label"></label>
+        <textarea asp-for="Content" class="form-control" rows="9"
+                  placeholder="Write the main learning content here"></textarea>
+        <span asp-validation-for="Content" class="text-danger"></span>
+    </div>
+    <div class="field-group">
+        <label asp-for="Type" class="form-label"></label>
+        <select asp-for="Type" class="form-select" asp-items="Html.GetEnumSelectList<Geekspace.Models.ResourceType>()"></select>
+        <span asp-validation-for="Type" class="text-danger"></span>
+    </div>
+    <div class="field-group">
+        <label asp-for="CategoryId" class="form-label"></label>
+        <select asp-for="CategoryId" class="form-select" asp-items="ViewBag.CategoryId"></select>
+        <span asp-validation-for="CategoryId" class="text-danger"></span>
+    </div>
+    <div class="field-group span-2">
+        <label asp-for="MediaUrl" class="form-label"></label>
+        <input asp-for="MediaUrl" class="form-control" placeholder="/media/images/example.jpg" />
+        <small class="form-text">Use a relative path to an image or video stored under wwwroot/media.</small>
+        <span asp-validation-for="MediaUrl" class="text-danger"></span>
+    </div>
+    <div class="field-group">
+        <label asp-for="CreatedDate" class="form-label"></label>
+        <input asp-for="CreatedDate" class="form-control" />
+        <span asp-validation-for="CreatedDate" class="text-danger"></span>
+    </div>
+    <div class="field-group publish-control">
+        <div class="form-check form-switch">
+            <input class="form-check-input" asp-for="IsPublished" />
+            <label class="form-check-label" asp-for="IsPublished">Publish immediately</label>
+        </div>
+        <small class="form-text">Draft resources remain visible to administrators only.</small>
+    </div>
+</div>

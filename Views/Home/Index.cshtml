@@ -1,87 +1,154 @@
-﻿@model List<Geekspace.Models.LearningResource>
+@model List<Geekspace.Models.LearningResource>
+@using Geekspace.Models
 
 @{
-    ViewData["Title"] = "Home";
+    ViewData["Title"] = "Cybersecurity Learning Hub";
+    var categories = ViewBag.Categories as List<Category> ?? new List<Category>();
+    var resourceCount = ViewBag.ResourceCount as int? ?? 0;
+    var categoryCount = ViewBag.CategoryCount as int? ?? 0;
+    var commentCount = ViewBag.CommentCount as int? ?? 0;
 }
 
-<!-- Internal CSS: page-scoped styles for this view only -->
-<style>
-.hero {
-    background: linear-gradient(135deg, var(--gs-hero-start) 0%, var(--gs-hero-end) 100%);
-    color: #fff;
-    padding: 3.5rem 2rem;
-    border-radius: 12px;
-    margin-bottom: 2rem;
-    box-shadow: 0 8px 24px var(--gs-shadow);
-}
-
-.resource-card {
-    height: 100%;
-}
-
-    .type-badge {
-        font-size: 0.75rem;
-        text-transform: uppercase;
-        letter-spacing: 0.03em;
-    }
-</style>
-
-<header class="hero text-center">
-    <h1 class="display-5 fw-bold">Welcome to Geekspace</h1>
-    <!-- Inline style: a one-off accent, deliberately not worth a CSS class -->
-    <p class="lead" style="opacity:0.85;">
-        A learning hub for cybersecurity, CTF challenges, and hands-on tech skills.
-    </p>
-    <a asp-controller="Resource" asp-action="Index" class="btn btn-light btn-lg mt-2">
-        Browse All Resources
-    </a>
-</header>
-
-<section aria-labelledby="latest-resources-heading">
-    <h2 id="latest-resources-heading" class="mb-3">Latest Learning Resources</h2>
-
-    @if (!Model.Any())
-    {
-        <p class="text-muted">No resources have been published yet. Check back soon.</p>
-    }
-    else
-    {
-        <div class="row row-cols-1 row-cols-md-3 g-4">
-            @for (int i = 0; i < Model.Count; i++)
-            {
-                var resource = Model[i];
-                <div class="col">
-                    <article class="card resource-card hover-lift fade-in-up" style="animation-delay: @(i * 0.06)s;">
-                        @if (!string.IsNullOrWhiteSpace(resource.MediaUrl) &&
-                             (resource.MediaUrl.EndsWith(".jpg") || resource.MediaUrl.EndsWith(".png") || resource.MediaUrl.EndsWith(".jpeg")))
-                        {
-                            <img src="@resource.MediaUrl" class="card-img-top" alt="@resource.Title" style="height:160px; object-fit:cover;" />
-                        }
-                        <div class="card-body d-flex flex-column">
-                            <span class="badge bg-secondary type-badge mb-2 align-self-start">@resource.Type</span>
-                            <h3 class="h5 card-title">@resource.Title</h3>
-                            <p class="card-text text-muted small">@resource.Category?.Name</p>
-                            <p class="card-text">@resource.Description</p>
-                            <a asp-controller="Resource" asp-action="Details" asp-route-id="@resource.Id"
-                               class="btn btn-outline-primary mt-auto">
-                                View Resource
-                            </a>
-                        </div>
-                            <footer class="card-footer text-muted small">
-                                Added @resource.CreatedDate.ToString("d MMMM yyyy", System.Globalization.CultureInfo.GetCultureInfo("en-US"))
-                            </footer>
-                    </article>
+<section class="hero-section">
+    <div class="container">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-7">
+                <span class="eyebrow eyebrow-light">Explore. Practise. Discuss.</span>
+                <h1>Build skills that make the digital world safer.</h1>
+                <p class="hero-lead">
+                    Geekspace turns cybersecurity concepts into practical learning.
+                    Discover curated articles, videos, virtual labs and simulations,
+                    then learn together with the community.
+                </p>
+                <div class="hero-actions">
+                    <a asp-controller="Resource" asp-action="Index" class="btn btn-accent btn-lg">
+                        Explore the library <span aria-hidden="true">→</span>
+                    </a>
+                    @if (User.Identity?.IsAuthenticated != true)
+                    {
+                        <a asp-area="Identity" asp-page="/Account/Register" class="btn btn-ghost-light btn-lg">
+                            Create free account
+                        </a>
+                    }
                 </div>
-            }
+                <div class="hero-proof" aria-label="Platform highlights">
+                    <div><strong>@resourceCount</strong><span>learning resources</span></div>
+                    <div><strong>@categoryCount</strong><span>focused topics</span></div>
+                    <div><strong>@commentCount</strong><span>community posts</span></div>
+                </div>
+            </div>
+            <div class="col-lg-5">
+                <div class="hero-visual" aria-label="Cybersecurity learning paths">
+                    <div class="signal signal-one"></div>
+                    <div class="signal signal-two"></div>
+                    <div class="visual-card visual-card-main">
+                        <span class="visual-kicker">LEARNING PATH</span>
+                        <div class="visual-icon">01</div>
+                        <h2>Cybersecurity Foundations</h2>
+                        <div class="progress-track"><span></span></div>
+                        <small>Knowledge that protects people and systems.</small>
+                    </div>
+                    <div class="visual-card visual-card-float">
+                        <span>● LIVE LAB</span>
+                        <strong>Safe practice environment</strong>
+                    </div>
+                </div>
+            </div>
         </div>
-    }
+    </div>
 </section>
 
-<section class="mt-5" aria-labelledby="about-heading">
-    <h2 id="about-heading">About This Platform</h2>
-    <p>
-        Geekspace brings together articles, videos, virtual labs, simulations, and self-assessments
-        for students learning cybersecurity and technology skills. Registered members can join
-        discussions on any resource; administrators curate the content library.
-    </p>
+<section class="section-block">
+    <div class="container">
+        <div class="section-heading">
+            <div>
+                <span class="eyebrow">Choose your direction</span>
+                <h2>Learn by topic</h2>
+                <p>Start with a foundation or dive straight into a practical discipline.</p>
+            </div>
+            <a asp-controller="Category" asp-action="Index" class="text-link">View all topics →</a>
+        </div>
+        <div class="topic-grid">
+            @for (var i = 0; i < categories.Count; i++)
+            {
+                var category = categories[i];
+                var number = (i + 1).ToString("00");
+                <a class="topic-card" asp-controller="Category" asp-action="Details" asp-route-id="@category.Id">
+                    <span class="topic-number">@number</span>
+                    <h3>@category.Name</h3>
+                    <p>@category.Description</p>
+                    <span class="topic-meta">@category.Resources.Count(r => r.IsPublished) resources</span>
+                </a>
+            }
+        </div>
+    </div>
+</section>
+
+<section class="section-block section-tinted">
+    <div class="container">
+        <div class="section-heading">
+            <div>
+                <span class="eyebrow">Recently published</span>
+                <h2>Continue exploring</h2>
+                <p>Fresh learning material selected for practical progress.</p>
+            </div>
+            <a asp-controller="Resource" asp-action="Index" class="text-link">Browse the library →</a>
+        </div>
+
+        @if (!Model.Any())
+        {
+            <div class="empty-state">
+                <h3>No published resources yet</h3>
+                <p>New material will appear here as soon as it is published.</p>
+            </div>
+        }
+        else
+        {
+            <div class="row row-cols-1 row-cols-md-2 row-cols-xl-3 g-4">
+                @foreach (var resource in Model)
+                {
+                    var hasImage = !string.IsNullOrWhiteSpace(resource.MediaUrl) &&
+                        new[] { ".jpg", ".jpeg", ".png", ".webp" }.Contains(System.IO.Path.GetExtension(resource.MediaUrl).ToLowerInvariant());
+                    <div class="col">
+                        <article class="resource-card">
+                            <a class="resource-media" asp-controller="Resource" asp-action="Details" asp-route-id="@resource.Id">
+                                @if (hasImage)
+                                {
+                                    <img src="@resource.MediaUrl" alt="" />
+                                }
+                                else
+                                {
+                                    <span class="resource-placeholder">@resource.Type.ToString().Substring(0, 1)</span>
+                                }
+                                <span class="type-pill">@resource.Type</span>
+                            </a>
+                            <div class="resource-card-body">
+                                <span class="resource-topic">@resource.Category?.Name</span>
+                                <h3><a asp-controller="Resource" asp-action="Details" asp-route-id="@resource.Id">@resource.Title</a></h3>
+                                <p>@resource.Description</p>
+                                <div class="resource-card-footer">
+                                    <span>@resource.CreatedDate.ToString("dd MMM yyyy")</span>
+                                    <a asp-controller="Resource" asp-action="Details" asp-route-id="@resource.Id"
+                                       aria-label="Open @resource.Title">Open →</a>
+                                </div>
+                            </div>
+                        </article>
+                    </div>
+                }
+            </div>
+        }
+    </div>
+</section>
+
+<section class="cta-section">
+    <div class="container">
+        <div class="cta-panel">
+            <div>
+                <span class="eyebrow eyebrow-light">Community powered learning</span>
+                <h2>Questions become clearer when we learn together.</h2>
+                <p>Register to join resource discussions and manage your learning activity.</p>
+            </div>
+            <a asp-area="Identity" asp-page="/Account/Register" class="btn btn-light btn-lg">Join Geekspace</a>
+        </div>
+    </div>
 </section>

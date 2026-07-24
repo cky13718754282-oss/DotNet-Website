@@ -1,0 +1,88 @@
+@model int
+
+<section class="interactive-module lab-module" data-virtual-lab data-resource-id="@Model" aria-labelledby="lab-title">
+    <div class="module-header">
+        <div>
+            <span class="module-label">Guided practical</span>
+            <h2 id="lab-title">Build an Isolated Practice Environment</h2>
+            <p>Complete the checklist on your own computer. Progress is stored only in this browser.</p>
+        </div>
+        <div class="lab-progress-summary" aria-live="polite">
+            <strong data-lab-percentage>0%</strong>
+            <span data-lab-count>0 of 6 steps</span>
+        </div>
+    </div>
+
+    <div class="lab-safety">
+        <span aria-hidden="true">!</span>
+        <div>
+            <strong>Safety boundary</strong>
+            <p>Use only systems you own or have explicit permission to test. Keep intentionally vulnerable machines on an isolated host-only network.</p>
+        </div>
+    </div>
+
+    <div class="lab-prerequisites">
+        <h3>Before you begin</h3>
+        <ul>
+            <li>VirtualBox or VMware installed</li>
+            <li>At least 8 GB RAM and 40 GB free storage</li>
+            <li>A security testing VM and a deliberately vulnerable practice VM</li>
+        </ul>
+    </div>
+
+    <div class="lab-progress-track" role="progressbar" aria-label="Lab completion"
+         aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" data-lab-progress>
+        <span data-lab-progress-bar></span>
+    </div>
+
+    <ol class="lab-checklist">
+        <li>
+            <label>
+                <input type="checkbox" data-lab-step />
+                <span class="lab-step-number">01</span>
+                <span><strong>Install the virtualisation platform</strong><small>Install VirtualBox or VMware and confirm that a new virtual machine can be created.</small></span>
+            </label>
+        </li>
+        <li>
+            <label>
+                <input type="checkbox" data-lab-step />
+                <span class="lab-step-number">02</span>
+                <span><strong>Create an isolated network</strong><small>Choose a host-only or internal network. Do not bridge a vulnerable machine directly to a public network.</small></span>
+            </label>
+        </li>
+        <li>
+            <label>
+                <input type="checkbox" data-lab-step />
+                <span class="lab-step-number">03</span>
+                <span><strong>Import the practice machines</strong><small>Add one security testing VM and one intentionally vulnerable target VM to the isolated network.</small></span>
+            </label>
+        </li>
+        <li>
+            <label>
+                <input type="checkbox" data-lab-step />
+                <span class="lab-step-number">04</span>
+                <span><strong>Record the assigned IP addresses</strong><small>Use the operating system network settings to identify each VM’s private IP address.</small></span>
+            </label>
+        </li>
+        <li>
+            <label>
+                <input type="checkbox" data-lab-step />
+                <span class="lab-step-number">05</span>
+                <span><strong>Verify isolated connectivity</strong><small>Confirm the two lab machines can communicate, while the vulnerable target remains separated from public networks.</small></span>
+            </label>
+        </li>
+        <li>
+            <label>
+                <input type="checkbox" data-lab-step />
+                <span class="lab-step-number">06</span>
+                <span><strong>Create a clean snapshot</strong><small>Save a baseline snapshot so the environment can be restored after each authorised practice session.</small></span>
+            </label>
+        </li>
+    </ol>
+
+    <div class="lab-complete" data-lab-complete hidden aria-live="polite">
+        <span aria-hidden="true">✓</span>
+        <div><strong>Lab setup complete</strong><p>Your isolated practice environment is ready for authorised exercises.</p></div>
+    </div>
+    <button type="button" class="btn btn-sm btn-outline-secondary mt-3" data-lab-reset>Reset progress</button>
+</section>
