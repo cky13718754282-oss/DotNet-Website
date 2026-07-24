@@ -1,0 +1,19 @@
+# .NET build output
+[Bb]in/
+[Oo]bj/
+
+# IDE and user-specific files
+.vs/
+.vscode/
+*.user
+*.suo
+
+# Local runtime and temporary files
+*.db-shm
+*.db-wal
+*.log
+tmp/
+
+# Operating system files
+.DS_Store
+Thumbs.db

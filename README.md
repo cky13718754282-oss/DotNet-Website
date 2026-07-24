@@ -8,8 +8,10 @@ Geekspace is an ASP.NET Core MVC learning platform focused on practical cybersec
 - Keyword, topic, and resource-type filtering
 - Article, video, simulation, self-assessment, and virtual-lab resources
 - User registration, login, account management, and role-based authorisation
+- Database-backed saved resources and completion tracking for members
 - Member comments and personal activity management
 - Admin/Root CRUD management for resources and categories
+- Live administrator dashboard for content, users, comments, and engagement
 - Admin/Root user and community activity management
 - SQLite database connectivity through Entity Framework Core
 - Client-side form validation and interactive learning feedback
@@ -72,6 +74,7 @@ The local `app.db` file contains:
 - `Categories`
 - `LearningResources`
 - `ResourceComments`
+- `UserLearningProgresses`
 - ASP.NET Identity user, role, claim, login, and token tables
 
 Entity Framework migrations are stored under `Data/Migrations`.
@@ -96,11 +99,12 @@ To inspect the database visually, stop the application and open `app.db` with DB
 
 - All visitor features
 - Post and delete personal comments
-- View and manage personal activity
+- Save resources, mark learning as completed, and manage personal activity
 
 ### Admin
 
 - Manage resources and categories
+- View the live administration dashboard
 - Moderate community activity
 - Manage ordinary users
 

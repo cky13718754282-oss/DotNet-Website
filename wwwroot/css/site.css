@@ -2330,3 +2330,344 @@ button:focus-visible {
     animation-duration: .01ms !important;
   }
 }
+
+/* Account progress, feedback and administration dashboard */
+.flash-message-wrap {
+  position: fixed;
+  z-index: 1080;
+  top: 1rem;
+  left: 50%;
+  width: min(92vw, 720px);
+  transform: translateX(-50%);
+}
+
+.flash-message-wrap .alert {
+  margin: 0;
+  border: 0;
+  box-shadow: var(--gs-shadow);
+}
+
+.learning-actions {
+  display: grid;
+  gap: .65rem;
+  padding: 1rem 0;
+  margin: 1rem 0;
+  border-top: 1px solid var(--gs-border);
+  border-bottom: 1px solid var(--gs-border);
+}
+
+.btn-saved,
+.btn-saved:hover {
+  border-color: #e0a328;
+  background: #fff4d6;
+  color: #765000;
+}
+
+.btn-completed,
+.btn-completed:hover {
+  border-color: #1b9b75;
+  background: #def8ed;
+  color: #075c45;
+}
+
+[data-bs-theme="dark"] .btn-saved {
+  border-color: #a8781b;
+  background: #3a2c11;
+  color: #ffd77d;
+}
+
+[data-bs-theme="dark"] .btn-completed {
+  border-color: #1b8064;
+  background: #11382e;
+  color: #8ce5ca;
+}
+
+.learning-signin-note {
+  padding: 1rem;
+  margin: 1rem 0;
+  border-radius: 12px;
+  background: var(--gs-surface-alt);
+}
+
+.learning-signin-note p {
+  margin: .25rem 0 .4rem;
+  color: var(--gs-muted);
+  font-size: .9rem;
+}
+
+.activity-heading {
+  margin-top: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.discussion-heading {
+  padding-top: 2.5rem;
+  border-top: 1px solid var(--gs-border);
+}
+
+.learning-list {
+  display: grid;
+  gap: .75rem;
+}
+
+.learning-list-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1rem 1.15rem;
+  border: 1px solid var(--gs-border);
+  border-radius: 14px;
+  background: var(--gs-surface);
+  box-shadow: var(--gs-shadow-sm);
+}
+
+.learning-list-main {
+  display: flex;
+  align-items: center;
+  gap: .9rem;
+}
+
+.learning-list-main h3 {
+  margin: .1rem 0;
+  font-size: 1rem;
+}
+
+.learning-list-main p {
+  margin: 0;
+  color: var(--gs-muted);
+  font-size: .82rem;
+}
+
+.learning-status-icon {
+  display: grid;
+  flex: 0 0 42px;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  border-radius: 12px;
+  font-size: 1.2rem;
+  font-weight: 800;
+}
+
+.learning-status-icon.saved {
+  background: #fff4d6;
+  color: #8b6007;
+}
+
+.learning-status-icon.complete {
+  background: #def8ed;
+  color: #087153;
+}
+
+.learning-badges {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: .4rem;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: .3rem .58rem;
+  border-radius: 999px;
+  font-size: .72rem;
+  font-weight: 800;
+}
+
+.status-badge.saved {
+  background: #fff4d6;
+  color: #765000;
+}
+
+.status-badge.complete {
+  background: #def8ed;
+  color: #075c45;
+}
+
+.dashboard-section {
+  padding-top: 2rem;
+}
+
+.dashboard-stat-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.dashboard-stat {
+  position: relative;
+  overflow: hidden;
+  padding: 1.35rem;
+  border: 1px solid var(--gs-border);
+  border-radius: var(--gs-radius);
+  background: var(--gs-surface);
+  box-shadow: var(--gs-shadow-sm);
+}
+
+.dashboard-stat::after {
+  position: absolute;
+  right: -1.5rem;
+  bottom: -2rem;
+  width: 7rem;
+  height: 7rem;
+  border-radius: 50%;
+  background: rgba(62, 214, 198, .12);
+  content: "";
+}
+
+.dashboard-stat-label {
+  display: block;
+  color: var(--gs-muted);
+  font-size: .76rem;
+  font-weight: 800;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+.dashboard-stat strong {
+  display: block;
+  margin: .35rem 0;
+  color: var(--gs-text);
+  font-size: 2.25rem;
+  line-height: 1;
+}
+
+.dashboard-stat small {
+  position: relative;
+  z-index: 1;
+  color: var(--gs-muted);
+}
+
+.dashboard-actions {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: .8rem;
+  margin: 1.5rem 0;
+}
+
+.dashboard-action-card {
+  display: flex;
+  align-items: flex-start;
+  gap: .75rem;
+  padding: 1rem;
+  border: 1px solid var(--gs-border);
+  border-radius: 14px;
+  background: var(--gs-surface-alt);
+  color: var(--gs-text);
+  transition: transform .2s ease, border-color .2s ease;
+}
+
+.dashboard-action-card:hover {
+  border-color: var(--gs-cyan-dark);
+  color: var(--gs-text);
+  transform: translateY(-2px);
+}
+
+.dashboard-action-card > span {
+  color: var(--gs-cyan-dark);
+  font-size: .75rem;
+  font-weight: 900;
+}
+
+.dashboard-action-card strong,
+.dashboard-action-card small {
+  display: block;
+}
+
+.dashboard-action-card small {
+  margin-top: .2rem;
+  color: var(--gs-muted);
+  line-height: 1.4;
+}
+
+.dashboard-columns {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 1.25rem;
+}
+
+.dashboard-panel {
+  padding: 1.35rem;
+  border: 1px solid var(--gs-border);
+  border-radius: var(--gs-radius);
+  background: var(--gs-surface);
+  box-shadow: var(--gs-shadow-sm);
+}
+
+.dashboard-panel-heading {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: .8rem;
+}
+
+.dashboard-panel-heading h2 {
+  margin: .1rem 0 0;
+  font-size: 1.25rem;
+}
+
+.dashboard-list article {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .8rem;
+  padding: .85rem 0;
+  border-top: 1px solid var(--gs-border);
+}
+
+.dashboard-list h3 {
+  margin: .15rem 0 0;
+  font-size: .95rem;
+}
+
+.dashboard-comment-list article {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  gap: .7rem;
+  padding: .85rem 0;
+  border-top: 1px solid var(--gs-border);
+}
+
+.dashboard-comment-list p {
+  overflow: hidden;
+  margin: .1rem 0;
+  color: var(--gs-muted);
+  font-size: .88rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.dashboard-comment-list small {
+  color: var(--gs-muted);
+  font-size: .75rem;
+}
+
+@media (max-width: 991.98px) {
+  .dashboard-stat-grid,
+  .dashboard-actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .dashboard-columns {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 575.98px) {
+  .dashboard-stat-grid,
+  .dashboard-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .learning-list-item {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .learning-badges {
+    justify-content: flex-start;
+  }
+}
