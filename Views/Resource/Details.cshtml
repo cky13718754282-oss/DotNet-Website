@@ -82,6 +82,16 @@
                     <p>@Model.Description</p>
                 </div>
                 <div class="resource-content">@Model.Content</div>
+                @if (Model.Type == Geekspace.Models.ResourceType.Article &&
+                    Model.Title.Equals("Python Scripting for Security Automation", StringComparison.OrdinalIgnoreCase))
+                {
+                    <partial name="_PythonSecurityAutomationArticle" />
+                }
+                else if (Model.Type == Geekspace.Models.ResourceType.Article &&
+                    Model.Title.Equals("Understanding the CIA Triad", StringComparison.OrdinalIgnoreCase))
+                {
+                    <partial name="_CiaTriadArticle" />
+                }
             </article>
 
             <aside class="detail-sidebar" aria-label="Resource actions">

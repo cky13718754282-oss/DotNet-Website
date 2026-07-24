@@ -1,0 +1,60 @@
+<section class="learning-article" aria-labelledby="cia-triad-heading">
+    <div>
+        <span class="eyebrow">Security foundations</span>
+        <h2 id="cia-triad-heading">The CIA Triad: Three Questions Behind Every Security Decision</h2>
+        <p>The CIA Triad is a practical model for evaluating how information and systems should be protected. It asks whether data is private, trustworthy and available when authorised users need it. A strong security design considers all three goals together.</p>
+    </div>
+
+    <div class="article-topic-grid">
+        <article class="article-topic-card cia-card--confidentiality">
+            <span>C / CONFIDENTIALITY</span>
+            <h3>Only authorised people can access the information</h3>
+            <p>Confidentiality prevents unintended disclosure. Common controls include access permissions, encryption, authentication and careful handling of sensitive data.</p>
+        </article>
+        <article class="article-topic-card cia-card--integrity">
+            <span>I / INTEGRITY</span>
+            <h3>Information remains accurate and trustworthy</h3>
+            <p>Integrity protects data from unauthorised or accidental alteration. Hashes, digital signatures, validation, version history and audit logs help detect changes.</p>
+        </article>
+        <article class="article-topic-card cia-card--availability">
+            <span>A / AVAILABILITY</span>
+            <h3>Systems and data remain usable when needed</h3>
+            <p>Availability reduces disruption through backups, redundancy, monitoring, capacity planning, maintenance and tested recovery procedures.</p>
+        </article>
+    </div>
+
+    <div>
+        <h2>Threats and matching controls</h2>
+        <ul class="cia-detail-list">
+            <li><strong>Confidentiality threat:</strong> a stolen password exposes student records. Multi-factor authentication, least-privilege access and encryption reduce the risk.</li>
+            <li><strong>Integrity threat:</strong> an attacker changes assessment results. Role-based permissions, audit trails and signed records help prevent or reveal tampering.</li>
+            <li><strong>Availability threat:</strong> ransomware or a service outage blocks the learning platform. Offline backups, redundancy and a tested recovery plan support restoration.</li>
+        </ul>
+    </div>
+
+    <div>
+        <h2>Example: protecting an online learning platform</h2>
+        <p>A single system can require all three parts of the triad at the same time:</p>
+        <div class="cia-scenario">
+            <article><strong>Keep accounts private</strong><p>Students should see only their own profile and grades, while authorised lecturers receive access appropriate to their role.</p></article>
+            <article><strong>Keep results accurate</strong><p>Grade changes should be validated, attributed to an authorised user and recorded in an audit history.</p></article>
+            <article><strong>Keep learning available</strong><p>Course materials should remain accessible during busy periods, hardware failure and planned maintenance.</p></article>
+        </div>
+    </div>
+
+    <div>
+        <h2>Security decisions involve trade-offs</h2>
+        <p>Improving one goal can affect another. Stronger authentication supports confidentiality but may slow access. Immediate replication improves availability but can also copy corrupted data, harming integrity. The right balance depends on the information, users, threats and business impact.</p>
+        <ol class="automation-steps">
+            <li><div><strong>Identify the asset</strong><p>Decide which information, service or process needs protection.</p></div></li>
+            <li><div><strong>Estimate the impact</strong><p>Consider what happens if the asset is disclosed, altered or unavailable.</p></div></li>
+            <li><div><strong>Select proportionate controls</strong><p>Choose safeguards that reduce the most important risks without making the system unusable.</p></div></li>
+            <li><div><strong>Test and review</strong><p>Verify that controls work, monitor changes and update the design as threats and requirements evolve.</p></div></li>
+        </ol>
+    </div>
+
+    <aside class="article-callout">
+        <strong>Quick review</strong>
+        <p>Confidentiality means private, Integrity means correct, and Availability means accessible. If a security proposal ignores one of these outcomes, its design is probably incomplete.</p>
+    </aside>
+</section>

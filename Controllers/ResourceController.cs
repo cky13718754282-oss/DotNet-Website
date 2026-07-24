@@ -23,7 +23,6 @@ namespace Geekspace.Controllers
             _userManager = userManager;
         }
 
-        // GET: Resource
         [AllowAnonymous]
         public async Task<IActionResult> Index(string? search, int? categoryId, ResourceType? type)
         {
@@ -65,7 +64,6 @@ namespace Geekspace.Controllers
         }
 
 
-        // GET: Resource/Create
         [Authorize(Roles = "Admin,Root")]
         public IActionResult Create()
         {
@@ -73,9 +71,6 @@ namespace Geekspace.Controllers
             return View();
         }
 
-        // POST: Resource/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [Authorize(Roles = "Admin,Root")]
         [ValidateAntiForgeryToken]
@@ -92,7 +87,6 @@ namespace Geekspace.Controllers
             return View(learningResource);
         }
 
-        // GET: Resource/Edit/5
         [Authorize(Roles = "Admin,Root")]
         public async Task<IActionResult> Edit(int? id)
         {
@@ -110,9 +104,6 @@ namespace Geekspace.Controllers
             return View(learningResource);
         }
 
-        // POST: Resource/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [Authorize(Roles = "Admin,Root")]
         [ValidateAntiForgeryToken]
@@ -148,7 +139,6 @@ namespace Geekspace.Controllers
             return View(learningResource);
         }
 
-        // GET: Resource/Details/5
         [AllowAnonymous]
         public async Task<IActionResult> Details(int? id)
         {
@@ -212,7 +202,6 @@ namespace Geekspace.Controllers
             return View(learningResource);
         }
 
-        // GET: Resource/Delete/5
         [Authorize(Roles = "Admin,Root")]
         public async Task<IActionResult> Delete(int? id)
         {
@@ -232,7 +221,6 @@ namespace Geekspace.Controllers
             return View(learningResource);
         }
 
-        // POST: Resource/Delete/5
         [HttpPost, ActionName("Delete")]
         [Authorize(Roles = "Admin,Root")]
         [ValidateAntiForgeryToken]

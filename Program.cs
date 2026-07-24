@@ -4,7 +4,6 @@ using Geekspace.Data;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection") ?? throw new InvalidOperationException("Connection string 'DefaultConnection' not found.");
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlite(connectionString));
@@ -18,7 +17,6 @@ builder.Services.AddControllersWithViews();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseMigrationsEndPoint();
@@ -26,7 +24,6 @@ if (app.Environment.IsDevelopment())
 else
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
     app.UseHsts();
 }
 
@@ -38,11 +35,7 @@ app.UseAuthorization();
 
 app.MapStaticAssets();
 
-// Custom route so a resource's read-only view is reached at
-// /Resource/{id} instead of /Resource/Details/{id}. This route only
-// matches a bare numeric segment after "Resource" (e.g. /Resource/5),
-// so /Resource/Edit/3, /Resource/Delete/3, and /Resource/Create are
-// untouched and continue to fall through to the default route below.
+// Numeric constraint keeps Resource actions on the default route.
 app.MapControllerRoute(
     name: "resourceDetails",
     pattern: "Resource/{id:int}",
@@ -56,7 +49,6 @@ app.MapControllerRoute(
 app.MapRazorPages()
    .WithStaticAssets();
 
-   // Seed the Root and Admin roles and promote the designated accounts.
    using (var scope = app.Services.CreateScope())
    {
        await SeedRolesAsync(scope.ServiceProvider);
@@ -67,10 +59,7 @@ app.MapRazorPages()
    }
    app.Run();
 
-   // Local function: creates the Root and Admin roles if missing, and
-   // promotes the specified email addresses on every application startup.
-   // Safe to run repeatedly — it only adds a role if the account doesn't
-   // already have it.
+   // Idempotently creates and assigns privileged roles.
    static async Task SeedRolesAsync(IServiceProvider services)
    {
        var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();

@@ -8,10 +8,7 @@ using Geekspace.ViewModels;
 
 namespace Geekspace.Controllers
 {
-    // Administration screen for managing registered accounts.
-    // Visible to both Root and Admin, but the permission boundaries
-    // between the two are enforced entirely server-side below —
-    // never rely on hiding a button in the view alone.
+    // Role boundaries are enforced server-side, not by view visibility.
     [Authorize(Roles = "Root,Admin")]
     public class UserManagementController : Controller
     {
@@ -22,7 +19,6 @@ namespace Geekspace.Controllers
             _userManager = userManager;
         }
 
-        // Returns "Root", "Admin", or "User" for a given account.
         private async Task<string> GetRoleAsync(IdentityUser user)
         {
             if (await _userManager.IsInRoleAsync(user, "Root")) return "Root";
@@ -30,7 +26,6 @@ namespace Geekspace.Controllers
             return "User";
         }
 
-        // GET: UserManagement
         public async Task<IActionResult> Index()
         {
             var users = _userManager.Users.ToList();
@@ -49,7 +44,6 @@ namespace Geekspace.Controllers
             return View(list.OrderBy(u => u.Email).ToList());
         }
 
-        // POST: UserManagement/PromoteToAdmin/{id}
         // Both Root and Admin may promote a plain User to Admin.
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -70,7 +64,6 @@ namespace Geekspace.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // POST: UserManagement/DemoteToUser/{id}
         // Only Root may demote an Admin back to a regular User.
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -96,7 +89,6 @@ namespace Geekspace.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // POST: UserManagement/Delete/{id}
         // Root may delete Admin or User accounts (but never Root, never itself).
         // Admin may delete only plain User accounts.
         [HttpPost]

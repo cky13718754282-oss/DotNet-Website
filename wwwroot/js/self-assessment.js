@@ -16,6 +16,10 @@
         questions.forEach(function (question) {
             question.classList.remove("answer-correct", "answer-wrong");
             question.querySelector(".answer-explanation").hidden = true;
+            var answerState = question.querySelector("[data-answer-state]");
+            answerState.hidden = true;
+            answerState.textContent = "";
+            answerState.classList.remove("is-correct", "is-wrong");
             question.querySelectorAll("label").forEach(function (label) {
                 label.classList.remove("selected-correct", "selected-wrong", "correct-option");
             });
@@ -49,6 +53,10 @@
             selected.closest("label").classList.add(isCorrect ? "selected-correct" : "selected-wrong");
             var correctInput = question.querySelector('input[value="' + correctValue + '"]');
             if (correctInput) correctInput.closest("label").classList.add("correct-option");
+            var answerState = question.querySelector("[data-answer-state]");
+            answerState.textContent = isCorrect ? "✓ Correct" : "✕ Incorrect";
+            answerState.classList.add(isCorrect ? "is-correct" : "is-wrong");
+            answerState.hidden = false;
             question.querySelector(".answer-explanation").hidden = false;
         });
 

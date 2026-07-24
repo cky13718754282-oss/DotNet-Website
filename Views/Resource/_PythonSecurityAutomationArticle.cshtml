@@ -1,0 +1,75 @@
+<section class="learning-article" aria-labelledby="python-automation-heading">
+    <div>
+        <span class="eyebrow">Practical guide</span>
+        <h2 id="python-automation-heading">Using Python for Security Automation</h2>
+        <p>Security teams handle large volumes of repetitive data: authentication logs, file hashes, network inventories and alert records. Python turns repeatable steps into consistent workflows, leaving analysts more time to investigate unusual behaviour.</p>
+    </div>
+
+    <div class="article-topic-grid">
+        <article class="article-topic-card">
+            <span>01 / COLLECT</span>
+            <h3>Gather security data</h3>
+            <p>Read structured logs, CSV exports and approved API responses without manually copying information.</p>
+        </article>
+        <article class="article-topic-card">
+            <span>02 / ANALYSE</span>
+            <h3>Find useful signals</h3>
+            <p>Filter repeated failures, unexpected addresses and suspicious patterns with clear, testable rules.</p>
+        </article>
+        <article class="article-topic-card">
+            <span>03 / REPORT</span>
+            <h3>Produce consistent output</h3>
+            <p>Summarise findings as JSON, CSV or readable console output that another analyst can verify.</p>
+        </article>
+    </div>
+
+    <div>
+        <h2>A reliable automation workflow</h2>
+        <ol class="automation-steps">
+            <li><div><strong>Define one narrow task</strong><p>Start with a measurable goal such as counting failed sign-ins in an authorised log file.</p></div></li>
+            <li><div><strong>Validate every input</strong><p>Handle missing files, malformed rows and unexpected values instead of silently producing a wrong result.</p></div></li>
+            <li><div><strong>Keep detection separate from action</strong><p>Report suspicious activity first. Do not automatically block accounts or change systems without review.</p></div></li>
+            <li><div><strong>Record what the script did</strong><p>Add timestamps and useful error messages so the workflow can be audited and repeated safely.</p></div></li>
+        </ol>
+    </div>
+
+    <div>
+        <h2>Example: summarising failed sign-ins</h2>
+        <p>The following defensive example reads a local training log and counts failed sign-ins by source address. It does not connect to a remote system or modify any accounts.</p>
+        <div class="code-example mt-3">
+            <div class="code-example-header"><strong>failed_signins.py</strong><span>Defensive log analysis</span></div>
+            <pre><code>from collections import Counter
+from pathlib import Path
+import re
+
+log_path = Path("training-auth.log")
+failed_pattern = re.compile(
+    r"Failed login.*source=(?P&lt;address&gt;[0-9a-fA-F:.]+)"
+)
+
+failed_by_address = Counter()
+
+for line in log_path.read_text(encoding="utf-8").splitlines():
+    match = failed_pattern.search(line)
+    if match:
+        failed_by_address[match.group("address")] += 1
+
+for address, count in failed_by_address.most_common():
+    print(f"{address}: {count} failed sign-ins")</code></pre>
+        </div>
+    </div>
+
+    <div>
+        <h2>Design principles for security scripts</h2>
+        <div class="article-topic-grid">
+            <article class="article-topic-card"><span>SAFE DEFAULTS</span><h3>Prefer read-only operations</h3><p>Make observation the default and require deliberate approval before any change.</p></article>
+            <article class="article-topic-card"><span>SECRETS</span><h3>Keep credentials out of code</h3><p>Use environment variables or an approved secret manager instead of committing keys and passwords.</p></article>
+            <article class="article-topic-card"><span>QUALITY</span><h3>Test predictable cases</h3><p>Use small sample files to verify normal input, malformed records and empty results.</p></article>
+        </div>
+    </div>
+
+    <aside class="article-callout">
+        <strong>Practise ethically</strong>
+        <p>Run automation only against data and systems you own or are explicitly authorised to assess. Review the output before taking operational action.</p>
+    </aside>
+</section>

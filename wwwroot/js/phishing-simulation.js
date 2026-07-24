@@ -84,6 +84,7 @@
         choiceButtons.forEach(function (button) {
             button.disabled = false;
             button.classList.remove("is-correct", "is-wrong");
+            button.removeAttribute("data-answer-label");
         });
     }
 
@@ -100,13 +101,15 @@
             button.disabled = true;
             if (button.dataset.simulationChoice === scenario.answer) {
                 button.classList.add("is-correct");
+                button.setAttribute("data-answer-label", button === event.currentTarget ? "✓ Correct choice" : "✓ Correct answer");
             } else if (button === event.currentTarget) {
                 button.classList.add("is-wrong");
+                button.setAttribute("data-answer-label", "✕ Your choice");
             }
         });
 
-        feedbackIcon.textContent = isCorrect ? "✓" : "!";
-        feedbackTitle.textContent = isCorrect ? "Good decision" : "Not quite";
+        feedbackIcon.textContent = isCorrect ? "✓" : "×";
+        feedbackTitle.textContent = isCorrect ? "Correct decision" : "Incorrect decision";
         feedbackExplanation.textContent = scenario.explanation;
         feedbackSignals.innerHTML = "";
         scenario.signals.forEach(function (signal) {

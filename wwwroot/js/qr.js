@@ -1,7 +1,4 @@
-// Renders the TOTP setup QR code on the "Configure authenticator app"
-// page using the qrcode.js library (wwwroot/lib/qrcode.js/qrcode.min.js).
-// The authenticator URI is provided by the server via a data attribute
-// on #qrCodeData, populated from EnableAuthenticatorModel.AuthenticatorUri.
+// Renders the server-provided authenticator URI as a QR code.
 window.addEventListener("load", function () {
     var dataElement = document.getElementById("qrCodeData");
     if (!dataElement) {
@@ -19,8 +16,6 @@ window.addEventListener("load", function () {
         height: 160
     });
 
-    // Hide the "enable QR code generation" help notice now that the
-    // QR code is actually rendering.
     var notice = document.getElementById("qrCodeNotice");
     if (notice) {
         notice.style.display = "none";

@@ -9,10 +9,7 @@ using Geekspace.ViewModels;
 
 namespace Geekspace.Controllers
 {
-    // Manages activity comments based on user roles:
-    // - User: can only see and manage their own comments
-    // - Admin: can see all comments, delete user/admin comments (not root)
-    // - Root: can see all comments, delete any comment
+    // Deletion permissions are derived from ownership and role.
     [Authorize]
     public class ActivityController : Controller
     {
@@ -25,7 +22,6 @@ namespace Geekspace.Controllers
             _userManager = userManager;
         }
 
-        // GET: Activity
         public async Task<IActionResult> Index()
         {
             var currentUserId = _userManager.GetUserId(User);
@@ -35,8 +31,6 @@ namespace Geekspace.Controllers
             IQueryable<Geekspace.Models.ResourceComment> query = _context.ResourceComments
                 .Include(c => c.LearningResource);
 
-            // For regular users, only show their own comments
-            // For Admin and Root, show all comments
             if (!isRoot && !isAdmin)
             {
                 query = query.Where(c => c.UserId == currentUserId);
@@ -44,13 +38,11 @@ namespace Geekspace.Controllers
 
             var comments = await query.OrderByDescending(c => c.PostedDate).ToListAsync();
 
-            // Get all user IDs from comments to determine deleted accounts and roles
             var userIds = comments.Select(c => c.UserId).Distinct().ToList();
             var usersDict = await _context.Users
                 .Where(u => userIds.Contains(u.Id))
                 .ToDictionaryAsync(u => u.Id, u => u.UserName ?? "Unknown");
 
-            // Determine which comments can be deleted by current user
             var canDeleteDict = new System.Collections.Generic.Dictionary<int, bool>();
             foreach (var comment in comments)
             {
@@ -82,7 +74,6 @@ namespace Geekspace.Controllers
                 canDeleteDict[comment.Id] = canDelete;
             }
 
-            // Store data in ViewBag for the view
             ViewBag.UserNames = usersDict;
             ViewBag.CanDeleteDict = canDeleteDict;
             ViewBag.CurrentUserId = currentUserId;
