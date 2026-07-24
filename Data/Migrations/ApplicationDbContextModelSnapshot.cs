@@ -108,6 +108,38 @@ namespace Geekspace.Data.Migrations
                     b.ToTable("ResourceComments");
                 });
 
+            modelBuilder.Entity("Geekspace.Models.UserLearningProgress", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsCompleted")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<bool>("IsSaved")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<DateTime>("LastUpdated")
+                        .HasColumnType("TEXT");
+
+                    b.Property<int>("LearningResourceId")
+                        .HasColumnType("INTEGER");
+
+                    b.Property<string>("UserId")
+                        .IsRequired()
+                        .HasColumnType("TEXT");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("LearningResourceId");
+
+                    b.HasIndex("UserId", "LearningResourceId")
+                        .IsUnique();
+
+                    b.ToTable("UserLearningProgresses");
+                });
+
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRole", b =>
                 {
                     b.Property<string>("Id")
@@ -320,6 +352,23 @@ namespace Geekspace.Data.Migrations
                     b.HasOne("Geekspace.Models.LearningResource", "LearningResource")
                         .WithMany("Comments")
                         .HasForeignKey("LearningResourceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("LearningResource");
+                });
+
+            modelBuilder.Entity("Geekspace.Models.UserLearningProgress", b =>
+                {
+                    b.HasOne("Geekspace.Models.LearningResource", "LearningResource")
+                        .WithMany()
+                        .HasForeignKey("LearningResourceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Microsoft.AspNetCore.Identity.IdentityUser", null)
+                        .WithMany()
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 

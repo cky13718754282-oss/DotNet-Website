@@ -62,6 +62,7 @@ app.MapRazorPages()
        await SeedRolesAsync(scope.ServiceProvider);
 
        var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+       await dbContext.Database.MigrateAsync();
        await SeedData.InitializeAsync(dbContext);
    }
    app.Run();
