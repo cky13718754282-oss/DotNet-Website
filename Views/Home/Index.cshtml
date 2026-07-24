@@ -127,7 +127,7 @@
                                 <h3><a asp-controller="Resource" asp-action="Details" asp-route-id="@resource.Id">@resource.Title</a></h3>
                                 <p>@resource.Description</p>
                                 <div class="resource-card-footer">
-                                    <span>@resource.CreatedDate.ToString("dd MMM yyyy")</span>
+                                    <span>@resource.CreatedDate.ToString("dd MMM yyyy", CultureInfo.InvariantCulture)</span>
                                     <a asp-controller="Resource" asp-action="Details" asp-route-id="@resource.Id"
                                        aria-label="Open @resource.Title">Open →</a>
                                 </div>

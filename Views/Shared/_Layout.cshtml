@@ -15,6 +15,9 @@
     <meta name="description" content="Geekspace is a practical cybersecurity learning platform with articles, videos, labs and community discussions." />
     <meta name="theme-color" content="#071226" />
     <title>@ViewData["Title"] | Geekspace</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400..900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
 </head>
@@ -32,7 +35,7 @@
             <div class="container">
                 <a class="navbar-brand" asp-controller="Home" asp-action="Index" aria-label="Geekspace home">
                     <span class="brand-mark" aria-hidden="true">G</span>
-                    <span>Geek<span>space</span></span>
+                    <span class="brand-wordmark">Geek<span>space</span></span>
                 </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#primaryNav"
                         aria-controls="primaryNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -116,7 +119,7 @@
                 <div class="col-lg-5">
                     <a class="footer-brand" asp-controller="Home" asp-action="Index">
                         <span class="brand-mark" aria-hidden="true">G</span>
-                        Geekspace
+                        <span class="brand-wordmark">Geek<span>space</span></span>
                     </a>
                     <p class="footer-copy mt-3">
                         A community learning system for building practical cybersecurity knowledge

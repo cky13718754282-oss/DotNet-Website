@@ -107,7 +107,7 @@
                                 <h2><a asp-action="Details" asp-route-id="@item.Id">@item.Title</a></h2>
                                 <p>@item.Description</p>
                                 <div class="resource-card-footer">
-                                    <span>@item.CreatedDate.ToString("dd MMM yyyy")</span>
+                                    <span>@item.CreatedDate.ToString("dd MMM yyyy", CultureInfo.InvariantCulture)</span>
                                     <a asp-action="Details" asp-route-id="@item.Id">Open →</a>
                                 </div>
                                 @if (isAdmin)

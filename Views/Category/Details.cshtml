@@ -55,7 +55,7 @@
                             <p>@item.Description</p>
                         </div>
                         <div class="list-meta">
-                            <span>@item.CreatedDate.ToString("dd MMM yyyy")</span>
+                            <span>@item.CreatedDate.ToString("dd MMM yyyy", CultureInfo.InvariantCulture)</span>
                             <a asp-controller="Resource" asp-action="Details" asp-route-id="@item.Id">Open →</a>
                         </div>
                     </article>

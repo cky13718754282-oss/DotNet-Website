@@ -62,7 +62,7 @@
                             <div>
                                 <span class="resource-topic">@(resource.Category?.Name ?? "Uncategorised") · @resource.Type</span>
                                 <h3><a asp-controller="Resource" asp-action="Details" asp-route-id="@resource.Id">@resource.Title</a></h3>
-                                <p>Updated @item.LastUpdated.ToString("dd MMM yyyy, HH:mm")</p>
+                                <p>Updated @item.LastUpdated.ToString("dd MMM yyyy, HH:mm", CultureInfo.InvariantCulture)</p>
                             </div>
                         </div>
                         <div class="learning-badges">
@@ -119,7 +119,7 @@
                                     }
                                 </td>
                                 <td class="comment-cell">@comment.Content</td>
-                                <td class="text-nowrap">@comment.PostedDate.ToString("dd MMM yyyy")</td>
+                                <td class="text-nowrap">@comment.PostedDate.ToString("dd MMM yyyy", CultureInfo.InvariantCulture)</td>
                                 <td class="text-end">
                                     @if (canDelete)
                                     {

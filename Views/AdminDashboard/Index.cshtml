@@ -109,7 +109,7 @@
                                 <div>
                                     <strong>@author</strong>
                                     <p>@comment.Content</p>
-                                    <small>@(comment.LearningResource?.Title ?? "Removed resource") · @comment.PostedDate.ToString("dd MMM yyyy")</small>
+                                    <small>@(comment.LearningResource?.Title ?? "Removed resource") · @comment.PostedDate.ToString("dd MMM yyyy", CultureInfo.InvariantCulture)</small>
                                 </div>
                             </article>
                         }
